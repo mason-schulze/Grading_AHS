@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>{% block title%}Grading Project{%endblock%}</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
+    <script src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        var to;
+        $(document).ready(function(){
+            $("#userOptions").toggle(function(){
+                $("#userOptionsMenu").slideDown(300);
+                to=setTimeout("$('#userOptionsMenu').slideUp(300)", 3000);
+            },
+            function(){
+                $("#userOptionsMenu").slideUp(300);
+            });
+            $("#userOptionsMenu").hover(
+                function(){
+                    to = clearTimeout(to);   
+                },
+                function(){
+                    to=setTimeout("$('#userOptionsMenu').slideUp(300)", 3000);
+                })
+            $("#content-container").click(function(){
+                $("#userOptionsMenu").slideUp(300);
+            });
+            $("#login-form").submit(function(){
+                if($("#id_username").val().trim()==""){
+                    $("#loginbox-errors").html("").append("Please enter a username");
+                    return false;
+                }
+                if($("#id_password").val().trim()==""){
+                    $("#loginbox-errors").html("").append("Please enter a password");
+                    return false;
+                }
+                $.post("/ajax/login/", $(this).serialize(), function(response){
+                    if(response.success){
+                        window.location.reload();
+                    }else{
+                        $("#loginbox-errors").text(response.error_msg);
+                    }
+                });
+                return false;
+            });
+        });
+        
+    </script>
+    {%block head%}{%endblock%}
+</head>
+<body>
+    <div id="topbar">
+        {%block topbar%}    
+            <div id="nav">
+                <a href="/home">Home</a>
+                {%if user.is_staff%}
+                <a href="/lesson/create/">Lesson Creation</a>
+                {%endif%}
+            </div>
+            <div id="userOptions">
+                {%if user.is_authenticated%}
+                Logged in as <strong>{{user.username}}</strong> <img class="midimg" src="/static/images/arrow_down.png"/>
+                {%else%}
+                <a>Login</a>
+                {%endif%}
+            </div>
+            <div id="userOptionsMenu" class="triangle-isosceles top">
+                {%if user.is_authenticated%}
+                <ul>
+                    <li><a href="/account/editpassword/">Change Password</a></li>
+                </ul>
+                <div id="user-button-container">
+                    <button onclick="window.location.href='/logout/'">Logout</button>
+                </div>
+                {%else%}
+                <div id="loginbox">
+                    <div id="loginbox-errors" class="error">
+                    </div>
+                    <form id="login-form">
+                        <p><label for="id_username">Username:</label> <input type="text" maxlength="30" name="username" id="id_username"></p>
+                        <p><label for="id_password">Password:</label> <input type="password" id="id_password" name="password"></p>
+                        <div id="user-button-container">
+                        <a id="register" href="/student/register/">Register</a>
+                            <input type="submit" value="Login"/>
+                            <!--<input type="button" onclick="window.location.href='/student/register/'" value="Register"/>-->                            
+                        </div>
+                   </form>
+                </div>
+                {%endif%}
+            </div>
+        {%endblock%}
+    </div>
+
+    <div id="content-container">
+    {% block content%}{%endblock%}
+</div>
+</body>
+</html>

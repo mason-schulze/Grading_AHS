@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{%block head%}
+<script src="/static/js/jquery.js"></script>
+<script>
+$(document).ready(function(){
+    addResponses({{responses|safe}});
+    $("#response_form").submit(function(){
+        responses = [];
+        var data = $(".question");
+        for(var x = 0; x<data.length; x++){
+            var id = $(data[x]).children('.q_id').val();
+            var response = $(data[x]).children('.response').val();
+            responses.push({id:id,response:response});
+        }        
+        $("#responses").val(JSON.stringify(responses));
+
+        if(opener!=null){
+            $.post(window.location.href,{"responses":JSON.stringify(responses)},function(data){
+                if(data.success){
+                    opener.location.reload(true);
+                    window.close();
+                }
+            });
+            return false;
+        }
+        return true;
+    });
+    function addResponses(arr){
+        if (arr.length!=0){
+            questions = $(".question");
+            for(var x = 0; x<questions.length; x++){
+                $(questions[x]).children('.response').text(arr[x].response)
+            } 
+        }
+    }
+});
+</script>
+<style type="text/css">
+    #content-container{
+        width:auto;
+    }
+    #response_form{
+        width:350px;
+        margin: 0 auto;
+    }
+    #response_form textarea{
+        width:100%;
+        resize:vertical;
+    }
+    h1{
+        text-align: center;
+    }
+    #topbar{
+        min-width:400px;
+    }
+</style>
+{%endblock%}
+{%block content%}
+<h1>{{lesson.name}}</h1>
+<form id="response_form" method="post">
+    {%for x in questions%}
+        <div class="question">
+            <span class="qnum">{{x.q_num}}</span>. {{x.text}}<br/>
+            <input type="hidden" class="q_id" value="{{x.id}}"/>
+            <textarea class="response" rows="6"></textarea><br/>
+        </div>
+    {%endfor%}
+    <input type="hidden" name="responses" id="responses"/>
+    <br/>
+    <input type="submit" value="Submit Answers"/>
+</form>
+{%endblock%}

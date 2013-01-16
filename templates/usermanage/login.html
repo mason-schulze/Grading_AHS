@@ -1,0 +1,19 @@
+{%extends "form_base.html"%}
+
+{%block title%}Login{%endblock%}
+
+{%block form%}
+{%if user.is_authenticated and next%}
+    <strong>Note:</strong> Access Denied. Please login to an authorized account to view this page. Otherwise <a href='/'>return home</a>.
+{%elif user.is_authenticated%}
+    <strong>Note:</strong> You are already logged as <strong>{{user.username}}</strong>. If you would like to logout securely and sign into a different account, <a href="/logout/?next=/login/">go here</a>. Or, just login below.
+{%else%}
+    <h1>Login</h1>
+{%endif%}
+<form method="post" action="{{action}}">
+   {% csrf_token %}
+   {{form.as_p}}
+   <input type="submit" value="Login"/>
+   <input type="hidden" value="{{next}}"/>
+</form>
+{%endblock%}

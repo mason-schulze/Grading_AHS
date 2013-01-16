@@ -1,0 +1,59 @@
+#current-lessons{
+    width:100%;
+    border-spacing: 0px;
+}
+#current-lessons{
+    width:100%;
+    border-spacing: 0px;
+}
+#current-lessons .creator{
+    width:150px;
+    text-align: center;
+}
+#current-lessons .users, #current-lessons .completed{
+    width:100px;
+    text-align: center;
+}
+th {
+    background: #404853;
+    background: linear-gradient(#687587, #404853);
+    color: #fff;
+}
+tbody tr:nth-child(even) td {
+    background: #e8eae9;
+    background: linear-gradient(#f7faf9, #e8eae9);
+}
+.lesson a{
+    color:black;
+    text-decoration: none;
+}
+.lesson:hover{
+    color:blue;
+}
+.lesson a:hover{
+    color:blue;
+    text-decoration: underline;
+}
+td{
+    padding:5px;
+}
+th{
+    font-size: 1.1em;
+}
+.pending{
+    color:red;
+    font-weight: bold;
+}
+.done{
+    color:green;
+}
+.icon{
+    opacity: 0.4;
+    cursor: pointer;
+    height:20px;
+    vertical-align: middle;
+    display:none;
+}
+.icon:hover{
+    opacity: 1;
+}

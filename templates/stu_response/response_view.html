@@ -1,0 +1,274 @@
+{%extends 'base.html'%}
+
+{%block head%}
+<link rel="stylesheet" type="text/css" href="/static/css/tables.css"/>
+<script src="/static/js/jquery.js"></script>
+<script type="text/javascript">
+var lesson_id = {{lesson_id}};
+var lesson_key = "{{lesson_key}}";
+$(document).ready(function(){
+    update();
+    $.getJSON("/getusers/"+lesson_id+"/", function(data){
+        var stuSelect = $("#stuSelect");
+        stuSelect.html("");
+        stuSelect.append("<option value='0'>---</option>");
+        for(x in data){
+            stuSelect.append("<option value='"+data[x].user_id+"'>"+data[x].full_name+" ("+data[x].username+")");
+        }
+        //check url for selected user
+        if(window.location.href.match(/\/u\/\d+/)!=null){
+            var currUser = window.location.href.match(/\/u\/\d+/).toString().match(/\d+/).toString();
+            $("#stuSelect option[value="+currUser+"]").attr("selected","selected");
+        }
+        $("#stuSelect").unbind();
+        $("#stuSelect").change(function(){
+            if($(this).val()!=0){
+                var user = $(this).val();
+                window.location.href = "/responses/"+lesson_key+"/u/"+user+"/";
+            }else{
+                window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/";
+            }
+        });
+    });
+    // Check url for selected question
+    if(window.location.href.match(/\/responses\/[a-zA-Z0-9]+\/\d+\//)!=null){
+            var currQ = window.location.href.match(/\d+\/$/).toString().replace("/","");
+            $("#qSelect option[value="+currQ+"]").attr("selected","selected");
+        }
+    $("#qSelect").change(function(){
+        if($(this).val()!=0){
+            window.location.href = "/responses/"+lesson_key+"/"+$(this).val()+"/";
+        }else{
+            window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/";
+        }
+    });
+    $("#selAll").click(function(){
+        $(".response input[type='checkbox']").attr("checked", "checked");
+        $(".response input[type='checkbox']").change();
+        return false;
+    });
+    $("#selNone").click(function(){
+        $(".response input[type='checkbox']").removeAttr("checked");
+        $(".response input[type='checkbox']").change();
+        return false;
+    });
+    $("#auto-refresh").toggle(
+        function(){
+            ar = setInterval("update()", 10000);
+            $(this).text("Stop");
+            $(this).css("background-color",'pink');
+        },
+        function(){
+            ar = clearInterval(ar);
+            $(this).text("Go Live");
+            $(this).css("background-color",'lightgreen');
+        });
+    $(".toggleq").toggle(
+        function(){
+            $(this).text("hide");
+            $(this).css("color",'pink');
+            $(this).next("p").slideDown();
+        },
+        function(){
+            $(this).text("show");
+            $(this).css("color",'lightgreen');
+            $(this).next("p").slideUp();
+        });
+    $("#show-all").toggle(
+        function(){
+            $(this).text("Hide All Questions");
+            $(this).css("background-color",'pink');
+            $(".toggleq").text("hide");
+            $(".toggleq").css("color",'pink');
+            $(".toggleq").next("p").slideDown();
+        },
+        function(){
+            $(this).text("Show All Questions");
+            $(this).css("background-color",'lightgreen');
+            $(".toggleq").text("show");
+            $(".toggleq").css("color",'lightgreen');
+            $(".toggleq").next("p").slideUp();
+        }
+    );
+    addTableListeners();
+});
+
+function addTableListeners(){
+    $(".response input[type='checkbox']").change(function(){
+        var curr = $($(this).next(".r_id"));
+        var seen = ($(this).attr('checked')!=undefined)?1:0;
+        $.get("/ajax/setseen/"+curr.val()+"/",{"seen":seen}, function(data){
+            
+        });
+    });    
+}
+
+var responseTemplate = "\
+    <tr class='response'>\
+        <td class='username'></td>\
+        <td class='date'></td>\
+        <td class='text'></td>\
+        <td class='seen'>\
+        <input type='checkbox'/>\
+        <input type='hidden' class='r_id'/>\
+        </td>\
+    </tr>";
+
+function update(){
+    var url = window.location.href.toString();
+    url = url.substring(url.indexOf("/responses"));
+    $.getJSON("/ajax"+url, function(data){
+        $(".response").remove();
+        if($(".q_heading").length!=0){
+            for(x in data.responses){
+                r = data.responses[x];
+                $($(".q_heading[rel='"+r.q_num+"']").parent()).after(responseTemplate);
+                var curr = $($(".q_heading[rel='"+r.q_num+"']").parent()).next(".response");
+                curr.children(".text").text(r.response);
+                curr.children(".date").text(r.edit_date);
+                curr.children(".username").text(r.student);
+                curr.children('.seen').children(".r_id").val(r.r_id);
+                if(r.viewed){
+                    curr.children('.seen').children("[type='checkbox']").attr("checked","checked");
+                }
+            }
+        }else{            
+            for(x in data.responses){
+                r = data.responses[x];
+                $("#responses").append(responseTemplate);
+                var curr = $(".response").last();
+                curr.children(".text").text(r.response);
+                curr.children(".date").text(r.edit_date);
+                curr.children(".username").text(r.student);
+                curr.children('.seen').children(".r_id").val(r.r_id);
+                if(r.viewed){
+                    curr.children('.seen').children("[type='checkbox']").attr("checked","checked");
+                }
+            }
+        }
+        addTableListeners();
+    });
+}
+</script>
+<style type="text/css">
+#responses{
+    width:100%;
+    border-spacing: 0px;
+}
+.username{
+    width:100px;
+}
+.date{
+    width:180px;
+}
+.seen{
+    width:20px;
+    text-align: center;
+}
+.q_heading{
+    text-align: left;
+    border-bottom: 1px solid black;
+}
+#filter-options{
+    position:fixed;
+    top:30px;
+    left:0;
+    right:0;
+    height:30px;
+    border-bottom:1px black solid;
+    background-color:#EEE;
+    min-width: 800px;
+}
+#filter-options h2{
+    display:inline;
+    margin:0;
+    margin-left:50px;
+}
+#selections{
+    position:absolute;
+    top:5px;
+    right:50px;
+}
+#content-container{
+    margin-top:70px;
+}
+th{
+    vertical-align: top;
+    padding:5px;
+}
+td{
+    text-align: center;
+    vertical-align: top;
+}
+.response:nth-child(even) td {
+    background: #e8eae9;
+    background: linear-gradient(#f7faf9, #e8eae9);
+}
+#auto-refresh,#show-all{
+    margin:0 10px;
+    padding:2px 10px;
+    font-size: 12px;
+    background-color: lightgreen;
+}
+p strong{
+    font-size: 1.5em;
+}
+.toggleq{
+    font-size: 12px;
+    color:lightgreen;
+}
+.q_text{
+    font-size: 14px;
+    font-weight: normal;
+    padding:0 10px;
+    display:none;
+}
+#selAll,#selNone{
+    color:lightblue;
+    font-size: .7em;
+}
+</style>
+{%endblock%}
+
+{%block content%}
+    <div id="filter-options">
+        <h2>Lesson: {{lesson.name}}</h2>
+        <div id="selections">
+            <button id="auto-refresh">Go Live</button>
+            {%if not question%}
+                <button id="show-all">Show All Questions</button>
+            {%endif%}
+            Student <select id="stuSelect">
+            </select>
+            Question Number <select id="qSelect">
+            <option value="0">---</option>
+            {%for x in select_r%}
+                <option value="{{x}}">{{x}}</option>
+            {%endfor%}
+            </select>
+        </div>
+    </div>
+    {%if question%}
+    <p>
+        <strong>Question {{question.q_num}}:</strong> {{question.text}}
+    </p>
+    {%endif%}
+    <table id="responses">
+        <tr id="headings">
+            <th>Student</th>
+            <th>Last Edit Date</th>
+            <th>Response</th>
+            <th>Seen <br/><a href='#' id='selAll'>All</a>|<a href='#' id='selNone'>None</a></th>
+        </tr>        
+        {%for q in questions%}  
+            {%if not question%}
+            <tr>
+                <th class="q_heading" rel="{{q.q_num}}"  colspan="4">
+                    Question {{q.q_num}} <a href="#" title="{{q.text}}" class="toggleq">show</a>
+                    <p class="q_text">{{q.text}}</p>
+                </th>
+            </tr>   
+            {%endif%}
+        {%endfor%}
+    </table>
+{%endblock%}

@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{%block head%}
+<script src="/static/js/jquery.js"></script>
+<script>
+var template = "<div class='question'><span class='qnum'></span>.<br/><textarea class='q_text' rows='5' cols=40'></textarea><div class='question-options'><button class='up'>Move Up</button><button class='down'>Move Down</button><button class='delete'>Delete</button></div><input type='hidden' class='q_id' value=''/></div>"
+$(document).ready(function(){
+    $("[name='lesson_name']").focus();
+    addListeners();
+    renumber();
+    $("#addQ").click(function(){
+        $("#question-container").append(template);
+        $("html,body").stop(true);
+        $("html,body").animate({
+            scrollTop:$(document).height()
+        }, 750);
+        renumber();
+        addListeners();
+        return false;
+    }); 
+
+    $("#lesson_form").submit(function(){
+        questions = [];
+        var data = $(".question");
+        for(var x = 0; x<data.length; x++){
+            var id = $(data[x]).children('.q_id').val();
+            var text = $($(data[x]).children('.q_text')).val();
+            questions.push({id:id,q_text:text,q_num:(x+1)});
+        }
+        $("#questions").val(JSON.stringify(questions));
+    });
+});
+function renumber(){
+    var data = $(".question");
+    var tab = 0;
+    for(var x = 0; x<data.length; x++){
+        $($(data[x]).children('.qnum')).text((x+1));
+        $($(data[x]).children('.q_text')).attr("tabindex",(x+2));
+        tab = x+2;
+    }
+    $("#addQ").attr("tabindex",(tab+1));
+    $("[type='submit']").attr("tabindex",(tab+2));
+}
+function addListeners(){
+    $(".delete").unbind();
+    $(".up").unbind();
+    $(".down").unbind();
+    $(".delete").click(function(){
+        $($(this).parent().parent(".question")).remove();
+        renumber();
+        return false;
+    });
+    $(".up").click(function(){
+        var curr = $(this).parent().parent(".question");
+        var prev = $(curr).prev(".question");
+        if(curr[0]===$(".question").first()[0]){
+            return false;
+        }
+        prev.fadeOut();
+        curr.fadeOut(function(){            
+            $(curr).insertBefore(prev).fadeIn();
+            prev.fadeIn();
+            renumber();
+        });           
+        return false;
+    });
+    $(".down").click(function(){
+        var curr = $(this).parent().parent(".question");
+        var next = $(curr).next(".question");
+        if(curr[0]===$(".question").last()[0]){
+            return false;
+        }
+        next.fadeOut();
+        curr.fadeOut(function(){            
+            $(curr).insertAfter(next).fadeIn();
+            next.fadeIn();
+            renumber();
+        });           
+        return false;
+    });
+    $("#delete-lesson").click(function(e){
+        e.preventDefault();
+        if(confirm("Are you sure?")){
+            $.get("/lesson/delete/{{lesson.key}}/", function(data){
+                if(data.success){
+                    window.location.href = "/home/";
+                }else{
+                    // Popup showing that delete was unsuccessful
+                }                
+            });
+        }else{
+            return false;
+        }
+    });
+}
+</script>
+<style type="text/css">
+#button-container{
+    width:500px;
+    margin:10px auto;
+}
+#question-container{
+    width:600px;
+    margin:10px auto;
+}
+.question-options{
+    width:100px;
+    display: inline-block;
+    float: right;
+}
+.question-options button{
+    padding:5px;
+}
+.q_text{
+    display: inline-block;
+    width:450px;
+    resize:vertical;
+}
+.hidden{
+    display:none;
+}
+#delete-lesson{
+    float:right;
+}
+</style>
+{%endblock%}
+
+{%block content %}
+{%if lesson%}
+    <h1>Edit Lesson</h1>
+{%else%}
+    <h1>Create Lesson</h1>
+{%endif%}
+<form id="lesson_form" method="post">
+    {%if lesson%}
+        <button id="delete-lesson">Delete Lesson</button> 
+        <h3>Lesson Name: <input type="text" name="lesson_name" tabindex="1" value="{{lesson.name}}"/></h3>
+
+        <div id="question-container">
+            {%for x in questions%}
+                <div class="question">
+                    <span class="qnum">{{x.q_num}}</span>.<br/>
+                    <textarea class="q_text" rows="5">{{x.text}}</textarea>
+                    <div class="question-options">
+                        <button class="up">Move Up</button>
+                        <button class="down">Move Down</button>
+                        <button class="delete">Delete</button>
+                    </div>
+                    <input type="hidden" class="q_id" value="{{x.id}}"/>
+                </div>
+                
+            {%endfor%}
+        </div> 
+        <div id="button-container">
+            <input type="hidden" name="questions" id="questions"/>
+            <button id="addQ">Add Question</button>              
+            <input type="submit" value="Submit"/>         
+        </div>
+    {%else%}
+        <h3>Lesson Name: <input type="text" tabindex="1" name="lesson_name"/></h3>
+        <div id="question-container">
+            {%for x in num %}
+            <div class="question">
+                <span class="qnum">{{x}}</span>.<br/>
+                <textarea class="q_text" rows="5"></textarea>                
+                <div class="question-options">
+                    <button class="up">Move Up</button>
+                    <button class="down">Move Down</button>
+                    <button class="delete">Delete</button>
+                </div>
+                <input type="hidden" class="q_id" value=""/>
+            </div>
+            
+            {%endfor%} 
+        </div>
+        <div id="button-container">
+            <input type="hidden" name="questions" id="questions"/>
+            <button id="addQ">Add Question</button>
+            <input type="submit" value="Create Lesson"/>         
+        </div>       
+    {%endif%}    
+</form>
+{%endblock%}
