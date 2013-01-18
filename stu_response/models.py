@@ -107,7 +107,7 @@ class Lesson(models.Model):
 def getPercentComplete(user, lesson):
     total = lesson.questions.count()
     completed = lesson.getNumCompleted(user_id=user.id)
-    return completed / total
+    return completed * 1.0 / total
 
 
 def getRespondedLessons(user):

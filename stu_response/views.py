@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from stu_response.models import Lesson, Question, Response, getRespondedLessons
+from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseForbidden
@@ -152,8 +152,10 @@ def viewResponses(request, lesson_id, q_num=None, stu_id=None):
 @user_passes_test(lambda u: u.is_staff)
 def getResponses(request, lesson_id, q_num=None, stu_id=None):
     lesson = get_object_or_404(Lesson, key=lesson_id)
+
     if request.user != lesson.creator:
         return HttpResponseForbidden("You do not have access to this page.")
+
     lesson_set = lesson.questions.all().order_by('q_num')
     responses = []
     if q_num:
@@ -215,7 +217,8 @@ def home(request):
     lessons = []
     if request.user.is_authenticated():
         if request.user.is_staff:
-            for x in Lesson.objects.filter(creator=request.user).order_by('-creation_date'):
+            lesson_set = Lesson.objects.filter(creator=request.user).order_by('-creation_date')
+            for x in lesson_set:
                 curr = {
                     "lesson": x,
                     "creator": x.creator,
@@ -225,8 +228,10 @@ def home(request):
                 lessons.append(curr)
             return render_to_response("staff_home.html", {"lessons": lessons}, context_instance=RequestContext(request))
         else:
-            temp = getRespondedLessons(request.user)
-            for l in temp:
+            # New Approach: Sorts student's view by percent completed
+            lesson_set = sorted(getRespondedLessons(request.user), key=lambda l: getPercentComplete(user=request.user, lesson=l))
+            # lesson_set = getRespondedLessons(request.user)
+            for l in lesson_set:
                 curr = {
                     "lesson": l,
                     "completed": l.getNumCompleted(user_id=request.user.id),
