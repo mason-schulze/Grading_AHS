@@ -63,6 +63,19 @@ class Lesson(models.Model):
                 studentsDone.append(s)
         return studentsDone
 
+    def getResponses(self, q_num=None):
+        lesson_responses = []
+        if q_num:
+            question = self.questions.get(q_num=q_num)
+            return Response.objects.get(question=question).order_by("-edit_date")
+        else:
+            q_set = self.questions.all().order_by('q_num')
+        for q in q_set:
+            q_responses = Response.objects.filter(question=q).order_by("-edit_date")
+            if len(q_responses) != 0:
+                lesson_responses.append(q_responses)
+        return lesson_responses
+
     def get_view_url(self):
         return "/lesson/" + self.key + "/"
 
@@ -88,6 +101,19 @@ class Lesson(models.Model):
                 key = sha1(str(random.random())).hexdigest()
             self.key = key
         super(Lesson, self).save(*args, **kwargs)
+
+
+def getPercentComplete(user, lesson):
+    responses = Response.objects.get(student=user)
+
+
+def getRespondedLessons(user):
+    all_lessons = Lesson.objects.all().order_by('-creation_date')
+    lessons = []
+    for l in all_lessons:
+        if user in l.getStudentsResponded():
+            lessons.append(l)
+    return lessons
 
 
 class QuestionForm(forms.ModelForm):

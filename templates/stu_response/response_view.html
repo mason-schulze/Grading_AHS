@@ -54,7 +54,7 @@ $(document).ready(function(){
     });
     $("#auto-refresh").toggle(
         function(){
-            ar = setInterval("update()", 10000);
+            ar = setInterval("update()", 6000);
             $(this).text("Stop");
             $(this).css("background-color",'pink');
         },
@@ -227,6 +227,9 @@ p strong{
     color:lightblue;
     font-size: .7em;
 }
+td{
+    padding:5px;
+}
 </style>
 {%endblock%}
 
@@ -254,17 +257,19 @@ p strong{
     </p>
     {%endif%}
     <table id="responses">
-        <tr id="headings">
-            <th>Student</th>
-            <th>Last Edit Date</th>
-            <th>Response</th>
-            <th>Seen <br/><a href='#' id='selAll'>All</a>|<a href='#' id='selNone'>None</a></th>
-        </tr>        
+        <thead>
+            <tr id="headings">
+                <th>Student</th>
+                <th>Last Edit Date</th>
+                <th>Response</th>
+                <th>Seen <br/><a href='#' id='selAll'>All</a>|<a href='#' id='selNone'>None</a></th>
+            </tr>  
+        </thead>      
         {%for q in questions%}  
             {%if not question%}
             <tr>
                 <th class="q_heading" rel="{{q.q_num}}"  colspan="4">
-                    Question {{q.q_num}} <a href="#" title="{{q.text}}" class="toggleq">show</a>
+                    <span title="{{q.text}}">Question {{q.q_num}}</span> <a href="#" title="Click to show/hide" class="toggleq">show</a>
                     <p class="q_text">{{q.text}}</p>
                 </th>
             </tr>   

@@ -20,12 +20,11 @@ $(document).ready(function(){
     function(){
         $($($(this).children('.name')).children('.icon')).hide();
     });
-    $(".lesson").click(function(){
-        var url = $($($(this).children(".name")).children("a")).attr("href");
-        // popup(url);
-        window.location.href = url;
-        return false;
-    });
+    // $(".lesson").click(function(){
+    //     var url = $($($(this).children(".name")).children("a")).attr("href");
+    //     window.location.href = url;
+    //     return false;
+    // });
     $(".icon").click(function(){
         var url = $($(this).prev('a')).attr("href");
         popup(url);
@@ -43,15 +42,17 @@ function popup(url){
     <h1>Home</h1>
     <h3>Your Lessons</h3>
     <table id="current-lessons">
-        <tr>
-            <th>Lesson Name</th>
-            <th>Creator</th>
-            <th>Completed</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>Lesson Name</th>
+                <th>Creator</th>
+                <th>Completed</th>
+            </tr>
+        </thead>
         {% for l in lessons%}
             <tr class="lesson">
                 <td class="name"><a href="/lesson/{{l.lesson.key}}/">{{l.lesson}}</a> <img class="icon" title="New Window" src="/static/images/popout_window.png"/></td>
-                <td class="creator">{{l.creator.get_full_name}}</td>
+                <td class="creator">{{l.lesson.creator.get_full_name}}</td>
                 {%if l.completed == l.lesson.questions.count%}
                     <td class="completed done">{{l.completed}}/{{l.lesson.questions.count}}</td>
                 {%else%}

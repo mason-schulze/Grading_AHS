@@ -1,6 +1,6 @@
 #current-lessons{
     width:100%;
-    border-spacing: 0px;
+    border-spacing: 0px;    
 }
 #current-lessons{
     width:100%;
@@ -14,12 +14,24 @@
     width:100px;
     text-align: center;
 }
+thead th:first-child{
+    -webkit-border-top-left-radius: 10px;    
+    -moz-border-radius-topleft: 10px;    
+    border-top-left-radius: 10px;    
+}
+thead th:last-child{
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius-topright: 10px;
+    border-top-right-radius: 10px;
+}
 th {
-    background: #404853;
-    background: linear-gradient(#687587, #404853);
+    font-size: 1.1em;
+    padding:10px;
+    background: #454540;
+    background: linear-gradient(#7daa72, #426339);
     color: #fff;
 }
-tbody tr:nth-child(even) td {
+tbody tr:nth-child(even){
     background: #e8eae9;
     background: linear-gradient(#f7faf9, #e8eae9);
 }
@@ -27,18 +39,19 @@ tbody tr:nth-child(even) td {
     color:black;
     text-decoration: none;
 }
+.lesson td{
+    height:35px;
+}
 .lesson:hover{
     color:blue;
+    background: #FFFEBD;
 }
 .lesson a:hover{
     color:blue;
     text-decoration: underline;
 }
 td{
-    padding:5px;
-}
-th{
-    font-size: 1.1em;
+    padding:0px 10px;
 }
 .pending{
     color:red;
@@ -50,7 +63,7 @@ th{
 .icon{
     opacity: 0.4;
     cursor: pointer;
-    height:20px;
+    height:19px;
     vertical-align: middle;
     display:none;
 }

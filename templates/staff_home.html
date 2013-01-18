@@ -1,18 +1,6 @@
 {%extends 'base.html'%}
 {%block head%}
 <link rel="stylesheet" type="text/css" href="/static/css/tables.css"/>
-<style type="text/css">
-.edit-button{
-    height:18px;
-    cursor: pointer;
-    float:right;
-    display:none;
-}
-.getlink{
-    float:right;
-    display:none;
-}
-</style>
 <script type="text/javascript" src="/static/js/jquery.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -27,11 +15,11 @@ $(document).ready(function(){
         window.location.href = url;
         return false;
     })
-    $(".lesson").click(function(){
-        var url = $($($(this).children(".name")).children("a")).attr("href");
-        window.location.href = url;
-        return false;
-    });
+    // $(".lesson").click(function(){
+    //     var url = $($($(this).children(".name")).children("a")).attr("href");
+    //     window.location.href = url;
+    //     return false;
+    // });
     $(".icon").click(function(){
         var url = $(this).attr("data-link");
         window.location.href = url;
@@ -43,11 +31,13 @@ $(document).ready(function(){
 {%block content%}
     <h1>Your Lessons</h1>
     <table id="current-lessons">
-        <tr>
-            <th>Lesson Name</th>
-            <th class="creator">Creator</th>
-            <th class="users">Completed</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>Lesson Name</th>
+                <th class="creator">Creator</th>
+                <th class="users">Completed</th>
+            </tr>
+        </thead>
         {% for l in lessons%}
             <tr class="lesson">
                 <td class="name"><a title="View {{l.lesson.name}} Responses" href="{{l.lesson.get_response_url}}1/">{{l.lesson}}</a> <img title="Edit Lesson" data-link="{{l.lesson.get_edit_url}}" class="icon" src="/static/images/edit.png"/><img class="icon" title="View Lesson" src="/static/images/view.png" data-link="{{l.lesson.get_view_url}}"/></td>

@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from stu_response.models import Lesson, Question, Response
+from stu_response.models import Lesson, Question, Response, getRespondedLessons
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseForbidden
@@ -50,6 +50,8 @@ def editLesson(request, lesson_id):
                 x.save()
                 lesson.questions.add(x)
             else:
+                if lesson.questions.filter(pk=q['id']).count() == 0:
+                    return HttpResponseForbidden("Stop screwing with us")
                 x = Question.objects.get(pk=q['id'])
                 x.text = q['q_text']
                 x.q_num = int(q['q_num'])
@@ -110,6 +112,13 @@ def viewLesson(request, lesson_id):
         responses = simplejson.loads(request.POST['responses'])
         for r in responses:
             changed = False
+
+            temp = lesson.questions.filter(pk=r['id']).count()
+            if request.is_ajax() and temp == 0:
+                return HttpResponseForbidden(simplejson({"success": False}), mimetype="application/json")
+            elif temp == 0:
+                return HttpResponseForbidden("Stop screwing with us")
+
             if Response.objects.filter(student=User.objects.get(pk=request.user.id), question=Question.objects.get(pk=r['id'])).count() > 0:
                 response = Response.objects.get(student=User.objects.get(pk=request.user.id), question=Question.objects.get(pk=r['id']))
                 if response.text != r['response']:
@@ -216,17 +225,12 @@ def home(request):
                 lessons.append(curr)
             return render_to_response("staff_home.html", {"lessons": lessons}, context_instance=RequestContext(request))
         else:
-            responses = Response.objects.filter(student=User.objects.get(pk=request.user.id)).order_by("edit_date")
-            temp = []
-            for r in responses:
-                lesson = r.getLesson()
-                if lesson not in temp:
-                    temp.append(lesson)
-                    curr = {
-                        "lesson": lesson,
-                        "creator": lesson.creator,
-                        "completed": lesson.getNumCompleted(user_id=request.user.id),
-                    }
-                    lessons.append(curr)
+            temp = getRespondedLessons(request.user)
+            for l in temp:
+                curr = {
+                    "lesson": l,
+                    "completed": l.getNumCompleted(user_id=request.user.id),
+                }
+                lessons.append(curr)
         return render_to_response("user_home.html", {"lessons": lessons}, context_instance=RequestContext(request))
     return render_to_response("home.html", context_instance=RequestContext(request))
