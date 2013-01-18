@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django import forms
 import random
 from hashlib import sha1
+from django.utils import timezone
 
 
 class Question(models.Model):
@@ -31,7 +32,7 @@ class Response(models.Model):
         return self.text.strip() == ""
 
     def get_format_date(self):
-        return self.edit_date.strftime("%b. %d, %Y, %I:%M %p")
+        return timezone.make_naive(self.edit_date, timezone.get_current_timezone()).strftime("%b. %d, %Y, %I:%M %p")
 
 
 class Lesson(models.Model):

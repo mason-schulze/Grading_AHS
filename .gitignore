@@ -5,6 +5,7 @@
 *.sql
 *.sqlite
 gradingprojdb
+settings.py
 *.pyc
 
 # OS generated files #
