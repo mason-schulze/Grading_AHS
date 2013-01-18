@@ -104,10 +104,6 @@ class Lesson(models.Model):
         super(Lesson, self).save(*args, **kwargs)
 
 
-def getPercentComplete(user, lesson):
-    responses = Response.objects.get(student=user)
-
-
 def getRespondedLessons(user):
     all_lessons = Lesson.objects.all().order_by('-creation_date')
     lessons = []
