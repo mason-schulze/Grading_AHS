@@ -224,6 +224,8 @@ def home(request):
                     "creator": x.creator,
                     "num_users": len(x.getStudentsResponded()),
                     "num_complete": len(x.getStudentsCompleted()),
+                    "students": x.getStudentsResponded(),
+                    "students_complete": x.getStudentsCompleted,
                 }
                 lessons.append(curr)
             return render_to_response("staff_home.html", {"lessons": lessons}, context_instance=RequestContext(request))

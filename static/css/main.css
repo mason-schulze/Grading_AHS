@@ -115,6 +115,9 @@ button:active, input[type=button]:active, input[type=submit]:active{
 .error{
     color:red;
 }
+.valid{
+    color:green;
+}
 
 .triangle-isosceles {
     position:relative;
