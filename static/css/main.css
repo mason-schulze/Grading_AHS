@@ -138,7 +138,7 @@ button:active, input[type=button]:active, input[type=submit]:active{
     left:50px; /* controls horizontal position */
     border-width:15px 15px 0; /* vary these values to change the angle of the vertex */
     border-style:solid;
-    border-color:white transparent;
+    border-color:#EEEEEE transparent;
     /* reduce the damage in FF3.0 */
     display:block; 
     width:0;
