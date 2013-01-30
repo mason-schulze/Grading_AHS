@@ -26,7 +26,25 @@ $(document).ready(function(){
         }
         return true;
     });
-    function addResponses(arr){
+    $("#save").click(function(){
+        responses = [];
+        var data = $(".question");
+        for(var x = 0; x<data.length; x++){
+            var id = $(data[x]).children('.q_id').val();
+            var response = $(data[x]).children('.response').val();
+            responses.push({id:id,response:response});
+        }
+        $("#responses").val(JSON.stringify(responses));
+        $.post(window.location.href,{"responses":JSON.stringify(responses)},function(data){
+            if(data.success){
+                if(opener!=null){
+                    opener.location.reload(true);
+                }
+            }
+        });
+        return false;
+    })
+    function addResponses(arr){        
         if (arr.length!=0){
             questions = $(".question");
             for(var x = 0; x<questions.length; x++){
@@ -68,6 +86,7 @@ $(document).ready(function(){
     {%endfor%}
     <input type="hidden" name="responses" id="responses"/>
     <br/>
+    <input type="button" id="save" value="Save"/>
     <input type="submit" value="Save and close"/>
 </form>
 {%endblock%}
