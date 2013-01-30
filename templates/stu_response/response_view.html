@@ -42,18 +42,8 @@ function addFilterListeners(){
         }else{
             window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/";
         }
-    });
+    });  
     
-    $("#selAll").click(function(){
-        $(".response input[type='checkbox']").attr("checked", "checked");
-        $(".response input[type='checkbox']").change();
-        return false;
-    });
-    $("#selNone").click(function(){
-        $(".response input[type='checkbox']").removeAttr("checked");
-        $(".response input[type='checkbox']").change();
-        return false;
-    });
     $("#auto-refresh").toggle(
         function(){
             ar = setInterval("update()", 6000);
@@ -64,18 +54,8 @@ function addFilterListeners(){
             ar = clearInterval(ar);
             $(this).text("Go Live");
             $(this).css("background-color",'lightgreen');
-        });
-    $(".toggleq").toggle(
-        function(){
-            $(this).text("hide");
-            $(this).css("color",'pink');
-            $(this).next("p").slideDown();
-        },
-        function(){
-            $(this).text("show");
-            $(this).css("color",'lightgreen');
-            $(this).next("p").slideUp();
-        });
+        });    
+    $(".show-all").unbind();
     $("#show-all").toggle(
         function(){
             $(this).text("Hide All Questions");
@@ -91,17 +71,42 @@ function addFilterListeners(){
             $(".toggleq").css("color",'lightgreen');
             $(".toggleq").next("p").slideUp();
         }
-    );
+    );  
 }
 
 function addTableListeners(){
+    $(".response input[type='checkbox']").unbind();
     $(".response input[type='checkbox']").change(function(){
         var curr = $($(this).next(".r_id"));
         var seen = ($(this).attr('checked')!=undefined)?1:0;
         $.get("/ajax/setseen/"+curr.val()+"/",{"seen":seen}, function(data){
             
         });
-    });    
+    });
+    $("#selAll").unbind();
+    $("#selAll").click(function(){
+        $(".response input[type='checkbox']").attr("checked", "checked");
+        $(".response input[type='checkbox']").change();
+        return false;
+    });
+    $("#selNone").unbind();
+    $("#selNone").click(function(){
+        $(".response input[type='checkbox']").removeAttr("checked");
+        $(".response input[type='checkbox']").change();
+        return false;
+    });
+    $(".toggleq").unbind();
+    $(".toggleq").toggle(
+        function(){
+            $(this).text("hide");
+            $(this).css("color",'pink');
+            $(this).next("p").slideDown();
+        },
+        function(){
+            $(this).text("show");
+            $(this).css("color",'lightgreen');
+            $(this).next("p").slideUp();
+        });      
 }
 
 var responseTemplate = "\
