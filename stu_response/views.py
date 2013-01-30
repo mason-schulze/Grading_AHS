@@ -129,7 +129,7 @@ def viewLesson(request, lesson_id):
                 response = Response(text=r['response'], student=User.objects.get(pk=request.user.id), question=Question.objects.get(pk=r['id']))
                 changed = True
             if changed:
-                response.save()
+                response.save(set_date=True)
                 lesson.recorded_responses.add(response)
         if request.is_ajax():
             return HttpResponse(simplejson.dumps({"success": True}), mimetype='application/json')

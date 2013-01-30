@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django import forms
 import random
 from hashlib import sha1
+import datetime
 from django.utils import timezone
+from django.utils.timezone import utc
 
 
 class Question(models.Model):
@@ -19,11 +21,16 @@ class Response(models.Model):
     student = models.ForeignKey(User)
     text = models.CharField(max_length=3000)
     creation_date = models.DateTimeField(auto_now_add=True)
-    edit_date = models.DateTimeField(auto_now=True)
+    edit_date = models.DateTimeField()
     viewed = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "(" + self.student.username + ") " + self.text
+
+    def save(self, set_date=None, *args, **kwargs):
+        if set_date:
+            self.edit_date = datetime.datetime.utcnow().replace(tzinfo=utc)
+        super(Response, self).save(*args, **kwargs)
 
     def getLesson(self):
         return self.question.lesson_set.all()[0]
