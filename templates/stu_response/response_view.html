@@ -7,34 +7,27 @@
 var lesson_id = {{lesson_id}};
 var lesson_key = "{{lesson_key}}";
 $(document).ready(function(){
+    // Updates the response table
     update();
-    $.getJSON("/getusers/"+lesson_id+"/", function(data){
-        var stuSelect = $("#stuSelect");
-        stuSelect.html("");
-        stuSelect.append("<option value='0'>---</option>");
-        for(x in data){
-            stuSelect.append("<option value='"+data[x].user_id+"'>"+data[x].full_name+" ("+data[x].username+")");
-        }
-        //check url for selected user
-        if(window.location.href.match(/\/u\/\d+/)!=null){
-            var currUser = window.location.href.match(/\/u\/\d+/).toString().match(/\d+/).toString();
-            $("#stuSelect option[value="+currUser+"]").attr("selected","selected");
-        }
-        $("#stuSelect").unbind();
-        $("#stuSelect").change(function(){
-            if($(this).val()!=0){
-                var user = $(this).val();
-                window.location.href = "/responses/"+lesson_key+"/u/"+user+"/";
-            }else{
-                window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/";
-            }
-        });
-    });
+
+    // Check url for selected user
+    if(window.location.href.match(/\/u\/\d+/)!=null){
+        var currUser = window.location.href.match(/\/u\/\d+/).toString().match(/\d+/).toString();
+        $("#stuSelect option[value="+currUser+"]").attr("selected","selected");
+    }
+
     // Check url for selected question
     if(window.location.href.match(/\/responses\/[a-zA-Z0-9]+\/\d+\//)!=null){
             var currQ = window.location.href.match(/\d+\/$/).toString().replace("/","");
             $("#qSelect option[value="+currQ+"]").attr("selected","selected");
         }
+
+    // Adds listeners for response table and topbar options
+    addFilterListeners();
+    addTableListeners();
+});
+
+function addFilterListeners(){
     $("#qSelect").change(function(){
         if($(this).val()!=0){
             window.location.href = "/responses/"+lesson_key+"/"+$(this).val()+"/";
@@ -42,6 +35,15 @@ $(document).ready(function(){
             window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/";
         }
     });
+    $("#stuSelect").change(function(){
+        if($(this).val()!=0){
+            var user = $(this).val();
+            window.location.href = "/responses/"+lesson_key+"/u/"+user+"/";
+        }else{
+            window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/";
+        }
+    });
+    
     $("#selAll").click(function(){
         $(".response input[type='checkbox']").attr("checked", "checked");
         $(".response input[type='checkbox']").change();
@@ -90,8 +92,7 @@ $(document).ready(function(){
             $(".toggleq").next("p").slideUp();
         }
     );
-    addTableListeners();
-});
+}
 
 function addTableListeners(){
     $(".response input[type='checkbox']").change(function(){
@@ -249,12 +250,16 @@ td{
                 <button id="show-all">Show All Questions</button>
             {%endif%}
             Student <select id="stuSelect">
+                <option value="0">---</option>
+                {%for u in users%}
+                    <option value="{{u.id}}">{{u.get_full_name}}</option>
+                {%endfor%}
             </select>
             Question Number <select id="qSelect">
-            <option value="0">---</option>
-            {%for q in questions%}
-                <option value="{{q.q_num}}">{{q.q_num}}. {{q.short_text}}</option>
-            {%endfor%}
+                <option value="0">---</option>
+                {%for q in questions%}
+                    <option value="{{q.q_num}}">{{q.q_num}}. {{q.short_text}}</option>
+                {%endfor%}
             </select>
         </div>
     </div>
