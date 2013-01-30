@@ -115,6 +115,7 @@ var responseTemplate = "\
     </tr>";
 
 function update(){
+    $(".loader").show();
     var url = window.location.href.toString();
     url = url.substring(url.indexOf("/responses"));
     $.getJSON("/ajax"+url, function(data){
@@ -147,6 +148,7 @@ function update(){
             }
         }
         addTableListeners();
+        $(".loader").hide();
     });
 }
 </script>
@@ -205,7 +207,7 @@ td{
     background: linear-gradient(#f7faf9, #e8eae9);
 }
 #auto-refresh,#show-all{
-    margin:0 10px;
+    margin:0 5px;
     padding:2px 10px;
     font-size: 12px;
     background-color: lightgreen;
@@ -230,6 +232,10 @@ p strong{
 td{
     padding:5px;
 }
+.loader{
+    display: none;
+    vertical-align: middle;
+}
 </style>
 {%endblock%}
 
@@ -237,7 +243,8 @@ td{
     <div id="filter-options">
         <h2>Lesson: {{lesson.name}}</h2>
         <div id="selections">
-            <button id="auto-refresh">Go Live</button>
+            <img class="loader" src="/static/images/loader.gif"/>
+            <button id="auto-refresh">Go Live</button>            
             {%if not question%}
                 <button id="show-all">Show All Questions</button>
             {%endif%}

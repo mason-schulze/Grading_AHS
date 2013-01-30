@@ -1,5 +1,7 @@
 from stu_response.models import Lesson, Response, Question
 from django.contrib import admin
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
 
 
 def get_num_completed(obj):
@@ -13,12 +15,31 @@ get_full_name_display.short_description = "Creator"
 
 
 class LessonAdmin(admin.ModelAdmin):
-    filter_horizontal = ('questions',)
+    # filter_horizontal = ('questions',)
     date_hierarchy = 'last_edit_date'
-    exclude = ('recorded_responses', )
+    exclude = ('recorded_responses', 'questions', )
     list_display = ("name", get_full_name_display, "last_edit_date", get_num_completed)
-    readonly_fields = ("key", )
+    readonly_fields = ('questions_display', "key", 'responses_display',)
     search_fields = ['name', 'creator__username', 'creator__first_name', 'creator__first_name', 'questions__text']
+
+    def questions_display(self, instance):
+        questions = mark_safe("<ul>")
+        for q in instance.questions.all().order_by('q_num'):
+            questions += mark_safe("<li>") + escape(q.__unicode__()) + mark_safe("</li>")
+        questions += mark_safe("</ul>")
+        return questions
+    questions_display.short_description = "Questions"
+    questions_display.allow_tags = True
+
+    def responses_display(self, instance):
+        responses = mark_safe("<ul>")
+        for r in instance.recorded_responses.all():
+            responses += mark_safe("<li>") + escape(r.__unicode__()) + mark_safe("</li>")
+        responses += mark_safe("</ul>")
+        return responses
+
+    responses_display.short_description = "Responses"
+    responses_display.allow_tags = True
 
 admin.site.register(Lesson, LessonAdmin)
 
@@ -30,6 +51,7 @@ admin.site.register(Response, ResponseAdmin)
 
 
 class QuestionAdmin(admin.ModelAdmin):
+    # need to show the parent Lesson and student responses
     pass
 
 admin.site.register(Question, QuestionAdmin)
