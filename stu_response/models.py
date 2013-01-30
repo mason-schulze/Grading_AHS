@@ -116,7 +116,6 @@ def getPercentComplete(user, lesson):
     completed = lesson.getNumCompleted(user_id=user.id)
     return completed * 1.0 / total
 
-
 def getRespondedLessons(user):
     all_lessons = Lesson.objects.all().order_by('-creation_date')
     lessons = []
