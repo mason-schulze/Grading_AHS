@@ -178,19 +178,15 @@ function update(){
     left:0;
     right:0;
     height:30px;
+    padding-right: 1.5em;
+    text-align: right;
     border-bottom:1px black solid;
-    background-color:#EEE;
+    background: #e8eae9;
+    background: linear-gradient(#f7faf9, #e8eae9);
     min-width: 800px;
 }
-#filter-options h2{
-    display:inline;
-    margin:0;
-    margin-left:50px;
-}
-#selections{
-    position:absolute;
-    top:5px;
-    right:50px;
+#filter-options button{
+    margin:5px 0px;
 }
 #content-container{
     margin-top:70px;
@@ -214,7 +210,7 @@ td{
     background-color: lightgreen;
 }
 p strong{
-    font-size: 1.5em;
+    font-size: 1.3em;
 }
 .toggleq{
     font-size: 12px;
@@ -227,8 +223,11 @@ p strong{
     display:none;
 }
 #selAll,#selNone{
-    color:lightblue;
+    color:lightgreen;
     font-size: .7em;
+}
+#selAll:active,#selNone:active{
+    color:pink;
 }
 td{
     padding:5px;
@@ -237,32 +236,34 @@ td{
     display: none;
     vertical-align: middle;
 }
+h1{
+    margin: 0;
+}
 </style>
 {%endblock%}
 
 {%block content%}
-    <div id="filter-options">
-        <h2>Lesson: {{lesson.name}}</h2>
-        <div id="selections">
-            <img class="loader" src="/static/images/loader.gif"/>
-            <button id="auto-refresh">Go Live</button>            
-            {%if not question%}
-                <button id="show-all">Show All Questions</button>
-            {%endif%}
-            Student <select id="stuSelect">
-                <option value="0">---</option>
-                {%for u in users%}
-                    <option value="{{u.id}}">{{u.get_full_name}}</option>
-                {%endfor%}
-            </select>
-            Question Number <select id="qSelect">
-                <option value="0">---</option>
-                {%for q in questions%}
-                    <option value="{{q.q_num}}">{{q.q_num}}. {{q.short_text}}</option>
-                {%endfor%}
-            </select>
-        </div>
+    <div id="filter-options">  
+        <img class="loader" src="/static/images/loader.gif"/>  
+        <strong>Filter Options:</strong>                   
+        Student <select id="stuSelect">
+            <option value="0">---</option>
+            {%for u in users%}
+                <option value="{{u.id}}">{{u.get_full_name}}</option>
+            {%endfor%}
+        </select>
+        Question Number <select id="qSelect">
+            <option value="0">---</option>
+            {%for q in questions%}
+                <option value="{{q.q_num}}">{{q.q_num}}. {{q.short_text}}</option>
+            {%endfor%}
+        </select>
+        <button id="auto-refresh">Go Live</button>            
+        {%if not question%}
+            <button id="show-all">Show All Questions</button>
+        {%endif%}        
     </div>
+    <h1>{{lesson.name}}</h1>
     {%if question%}
     <p>
         <strong>Question {{question.q_num}}:</strong> {{question.text}}
