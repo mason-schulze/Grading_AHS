@@ -146,7 +146,7 @@ def viewResponses(request, lesson_id, q_num=None, stu_id=None):
     curr_q = None
     if q_num:
         curr_q = lesson.questions.get(q_num=q_num)
-    return render_to_response("stu_response/response_view.html", {"questions": lesson_set, "lesson_key": lesson_id, "question": curr_q, "lesson": lesson, "lesson_id": lesson.id, "select_r": range(1, lesson.questions.count() + 1)}, context_instance=RequestContext(request))
+    return render_to_response("stu_response/response_view.html", {"questions": lesson_set, "lesson_key": lesson_id, "question": curr_q, "lesson": lesson, "lesson_id": lesson.id, "users": lesson.getStudentsResponded()}, context_instance=RequestContext(request))
 
 
 @user_passes_test(lambda u: u.is_staff)

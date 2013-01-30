@@ -252,8 +252,8 @@ td{
             </select>
             Question Number <select id="qSelect">
             <option value="0">---</option>
-            {%for x in select_r%}
-                <option value="{{x}}">{{x}}</option>
+            {%for q in questions%}
+                <option value="{{q.q_num}}">{{q.q_num}}. {{q.short_text}}</option>
             {%endfor%}
             </select>
         </div>

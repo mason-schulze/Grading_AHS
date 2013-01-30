@@ -15,6 +15,12 @@ class Question(models.Model):
     def __unicode__(self):
         return self.text
 
+    def short_text(self):
+        if len(self.text) < 15:
+            return self.text
+        else:
+            return self.text[:12] + "..."
+
 
 class Response(models.Model):
     question = models.ForeignKey(Question)
