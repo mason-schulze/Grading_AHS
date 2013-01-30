@@ -156,16 +156,19 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
     if request.user != lesson.creator:
         return HttpResponseForbidden("You do not have access to this page.")
 
-    lesson_set = lesson.questions.all().order_by('q_num')
+    # lesson_set = lesson.questions.all().order_by('q_num')
     responses = []
     if q_num:
-        responses.append(Response.objects.filter(question=lesson.questions.filter(q_num=q_num)).order_by("-edit_date"))
+        # responses.append(Response.objects.filter(question=lesson.questions.filter(q_num=q_num)).order_by("-edit_date"))
+        responses.append(lesson.getResponses(q_num=q_num))
     elif stu_id:
-        for question in lesson_set:
-            responses.append(Response.objects.filter(question=question, student=User.objects.get(pk=stu_id)))
+        # for question in lesson_set:
+        #     responses.append(Response.objects.filter(question=question, student=User.objects.get(pk=stu_id)))
+        responses = lesson.getResponses(stu_id=stu_id)
     else:
-        for question in lesson_set:
-            responses.append(Response.objects.filter(question=question).order_by("edit_date"))
+        # for question in lesson_set:
+        #     responses.append(Response.objects.filter(question=question).order_by("edit_date"))
+        responses = lesson.getResponses()
     response_set = []
     for x in responses:
         for r in x:

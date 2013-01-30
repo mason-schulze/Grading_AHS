@@ -32,10 +32,12 @@ class LessonAdmin(admin.ModelAdmin):
     questions_display.allow_tags = True
 
     def responses_display(self, instance):
-        responses = mark_safe("<ul>")
-        for r in instance.recorded_responses.all():
-            responses += mark_safe("<li>") + escape(r.__unicode__()) + mark_safe("</li>")
-        responses += mark_safe("</ul>")
+        responses = ""
+        for question in instance.getResponses():
+            responses += mark_safe("<ul>")
+            for r in question:
+                responses += mark_safe("<li>") + escape(r.__unicode__()) + mark_safe("</li>")
+            responses += mark_safe("</ul>")
         return responses
 
     responses_display.short_description = "Responses"

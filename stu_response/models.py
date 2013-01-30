@@ -64,17 +64,24 @@ class Lesson(models.Model):
                 studentsDone.append(s)
         return studentsDone
 
-    def getResponses(self, q_num=None):
+    def getResponses(self, q_num=None, stu_id=None):
         lesson_responses = []
         if q_num:
             question = self.questions.get(q_num=q_num)
-            return Response.objects.get(question=question).order_by("-edit_date")
+            return Response.objects.filter(question=question).exclude(text="").order_by("-edit_date")
+        elif stu_id:
+            student = User.objects.get(pk=stu_id)
+            q_set = self.questions.all().order_by('q_num')
+            for q in q_set:
+                q_responses = Response.objects.filter(question=q, student=student)
+                if len(q_responses) != 0:
+                    lesson_responses.append(q_responses)
         else:
             q_set = self.questions.all().order_by('q_num')
-        for q in q_set:
-            q_responses = Response.objects.filter(question=q).order_by("-edit_date")
-            if len(q_responses) != 0:
-                lesson_responses.append(q_responses)
+            for q in q_set:
+                q_responses = Response.objects.filter(question=q).exclude(text="").order_by("-edit_date")
+                if len(q_responses) != 0:
+                    lesson_responses.append(q_responses)
         return lesson_responses
 
     def get_view_url(self):
