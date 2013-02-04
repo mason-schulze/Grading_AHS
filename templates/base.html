@@ -17,7 +17,7 @@
             });
             $("#userOptionsMenu").hover(
                 function(){
-                    to = clearTimeout(to);   
+                    to = clearTimeout(to);
                 },
                 function(){
                     to=setTimeout("$('#userOptionsMenu').slideUp(300)", 3000);
@@ -38,7 +38,10 @@
                     if(response.success){
                         window.location.reload();
                     }else{
-                        $("#loginbox-errors").text(response.error_msg);
+                        $("#loginbox-errors").fadeIn(function(){
+                            $("#loginbox-errors").text(response.error_msg);
+                            $("#loginbox-errors").delay(1000).fadeOut(3000);
+                        });
                     }
                 });
                 return false;
