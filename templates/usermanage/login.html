@@ -1,19 +1,37 @@
 {%extends "form_base.html"%}
+{%block head%}
+    <style type="text/css">
+        td{
+            padding:5px;
+        }
+    </style>
+{%endblock%}
 
 {%block title%}Login{%endblock%}
 
 {%block form%}
-{%if user.is_authenticated and next%}
-    <strong>Note:</strong> Access Denied. Please login to an authorized account to view this page. Otherwise <a href='/'>return home</a>.
-{%elif user.is_authenticated%}
-    <strong>Note:</strong> You are already logged as <strong>{{user.username}}</strong>. If you would like to logout securely and sign into a different account, <a href="/logout/?next=/login/">go here</a>. Or, just login below.
-{%else%}
-    <h1>Login</h1>
-{%endif%}
-<form method="post" action="{{action}}">
-   {% csrf_token %}
-   {{form.as_p}}
-   <input type="submit" value="Login"/>
-   <input type="hidden" value="{{next}}"/>
-</form>
+    {%if user.is_authenticated and next%}
+        <strong>Note:</strong> Access Denied. Please login to an authorized account to view this page. Otherwise <a href='/'>return home</a>.
+    {%elif user.is_authenticated%}
+        <strong>Note:</strong> You are already logged as <strong>{{user.username}}</strong>. If you would like to logout securely and sign into a different account, <a href="/logout/?next=/login/">go here</a>. Or, just login below.
+    {%elif next%}
+        <strong class="error">Note:</strong> You must be logged on to view this page. Please login or <a href="/student/register/?next={{next}}">register</a>.
+        <h1>Login</h1>
+    {%else%}
+        <h1>Login</h1>
+    {%endif%}
+    <form method="post" action="{{action}}">
+       {% csrf_token %}
+       <table>
+           {%for field in form%}
+                <tr>
+                    <td>{{field.label}}</td>
+                    <td>{{field}}</td>
+                    <td class="error">{{field.errors}}</td>
+                </tr>
+           {%endfor%}
+       </table>
+       <input type="submit" value="Login"/>
+       <input type="hidden" value="{{next}}"/>
+    </form>
 {%endblock%}

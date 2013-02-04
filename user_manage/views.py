@@ -22,6 +22,11 @@ def registerStudent(request):
         form = StudentCreationForm(request.POST)
         if form.is_valid():
             form.save()
+            user = authenticate(username=request.POST['username'], password=request.POST['password1'])
+            if user is not None and user.is_active:
+                login(request, user)
+            if request.GET.get("next", False):
+                return redirect(request.GET.get("next"))
             return redirect('/')
     else:
         form = TeacherCreationForm()
