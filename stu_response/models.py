@@ -129,6 +129,7 @@ def getPercentComplete(user, lesson):
     completed = lesson.getNumCompleted(user_id=user.id)
     return completed * 1.0 / total
 
+
 def getRespondedLessons(user):
     all_lessons = Lesson.objects.all().order_by('-creation_date')
     lessons = []
@@ -136,6 +137,34 @@ def getRespondedLessons(user):
         if user in l.getStudentsResponded():
             lessons.append(l)
     return lessons
+
+
+class Class(models.Model):
+    name = models.CharField(max_length=100, help_text='Name of the class')
+    creator = models.ForeignKey(User, related_name='+')
+    description = models.CharField(max_length=2000, help_text='A short description.')
+    students = models.ManyToManyField(User, blank=True)
+    password = models.CharField(max_length=50, help_text='A password required to the class.')
+    lessons = models.ManyToManyField(Lesson, blank=True)
+    uid = models.CharField(max_length=200, unique=True)
+
+    def save(self, *args, **kwargs):
+        if self.uid == None or self.uid == "":
+            key = hex(random.getrandbits(32)).rstrip("L").lstrip("0x")
+            while Class.objects.filter(uid=key).count() > 0:
+                key = hex(random.getrandbits(32)).rstrip("L").lstrip("0x")
+            self.uid = key
+        super(Class, self).save(*args, **kwargs)
+
+
+class ClassForm(forms.ModelForm):
+
+    class Meta:
+        model = Class
+        fields = ('name', 'description', 'password',)
+        widgets = {
+            'description': forms.Textarea(),
+        }
 
 
 class QuestionForm(forms.ModelForm):

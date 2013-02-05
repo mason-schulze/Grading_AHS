@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete
+from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete, ClassForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseForbidden
@@ -147,6 +147,20 @@ def viewResponses(request, lesson_id, q_num=None, stu_id=None):
     if q_num:
         curr_q = lesson.questions.get(q_num=q_num)
     return render_to_response("stu_response/response_view.html", {"questions": lesson_set, "lesson_key": lesson_id, "question": curr_q, "lesson": lesson, "lesson_id": lesson.id, "users": lesson.getStudentsResponded()}, context_instance=RequestContext(request))
+
+
+@user_passes_test(lambda u: u.is_staff)
+def createClass(request):
+    if request.method == "POST":
+        form = ClassForm(data=request.POST)
+        if form.is_valid():
+            new_class = form.save(commit=False)
+            new_class.creator = request.user
+            new_class.save()
+            return redirect('/')
+    else:
+        form = ClassForm()
+    return render_to_response("form_base.html", {"form": form, "submit_text": "Add Class"}, context_instance=RequestContext(request))
 
 
 @user_passes_test(lambda u: u.is_staff)
