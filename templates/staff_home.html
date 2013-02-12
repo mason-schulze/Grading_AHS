@@ -8,12 +8,12 @@ $(document).ready(function(){
     },
     function(){
         $($($(this).children(".name")).children(".display").children(".icon")).hide();
-    })
+    });
     $(".lesson a").click(function(){
         var url = $(this).attr("href");
         window.location.href = url;
         return false;
-    })
+    });
     $(".lesson").click(function(){
         $($($(this).children(".name")).children(".details")).slideToggle(200);
     });
@@ -43,9 +43,6 @@ $(document).ready(function(){
     padding:10px 0px;
     height:18px;
 }
-.name .display{
-    /*font-weight: bold;*/
-}
 </style>
 {%endblock%}
 {%block content%}
@@ -58,7 +55,7 @@ $(document).ready(function(){
                 <th class="users">Completed</th>
             </tr>
         </thead>
-        {% for l in lessons%}
+        {% for l in lessons %}
             <tr class="lesson">
                 <td class="name">
                     <div class="display">
@@ -75,13 +72,6 @@ $(document).ready(function(){
                         </p>
                         <p>
                             <strong>Response Recieved:</strong>
-                            {% for u in l.students %}
-                                {%if u in l.students_complete%}
-                                    <span class="valid">{{u}}</span>
-                                {%else%}
-                                    <span class="error">{{u}}</span>
-                                {%endif%}
-                            {%endfor%}
                         </p>
                     </div>
                 </td>
