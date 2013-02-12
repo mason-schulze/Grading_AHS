@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete, ClassForm
+from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete, ClassForm, ClassEditForm, Class
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseForbidden
@@ -164,6 +164,23 @@ def createClass(request):
 
 
 @user_passes_test(lambda u: u.is_staff)
+def editClass(request, class_id):
+    c = get_object_or_404(Class, uid=class_id)
+    if(request.user == c.creator):
+        if request.method == "POST":
+            form = ClassEditForm(data=request.POST, instance=c, creator=request.user)
+            if form.is_valid():
+                form.save()
+                return redirect('/home/')
+        else:
+            form = ClassEditForm(instance=c, creator=request.user)
+        return render_to_response('form_base.html', {"form": form, "submit_text": "Submit Class", "title": "Edit question", "success": "false"}, context_instance=RequestContext(request))
+    else:
+        # Is the user is not the creator of the question (or staff)
+        return redirect('/')
+
+
+@user_passes_test(lambda u: u.is_staff)
 def getResponses(request, lesson_id, q_num=None, stu_id=None):
     lesson = get_object_or_404(Lesson, key=lesson_id)
 
@@ -242,7 +259,7 @@ def home(request):
                     "num_users": len(x.getStudentsResponded()),
                     "num_complete": len(x.getStudentsCompleted()),
                     "students": x.getStudentsResponded(),
-                    "students_complete": x.getStudentsCompleted,
+                    "students_complete": x.getStudentsCompleted(),
                 }
                 lessons.append(curr)
             return render_to_response("staff_home.html", {"lessons": lessons}, context_instance=RequestContext(request))

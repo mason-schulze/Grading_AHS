@@ -141,7 +141,7 @@ def getRespondedLessons(user):
 
 class Class(models.Model):
     name = models.CharField(max_length=100, help_text='Name of the class')
-    creator = models.ForeignKey(User, related_name='+')
+    creator = models.ForeignKey(User, related_name='+', editable=False)
     description = models.CharField(max_length=2000, help_text='A short description.')
     students = models.ManyToManyField(User, blank=True)
     password = models.CharField(max_length=50, help_text='A password required to the class.')
@@ -165,6 +165,21 @@ class ClassForm(forms.ModelForm):
         widgets = {
             'description': forms.Textarea(),
         }
+
+
+class ClassEditForm(forms.ModelForm):
+
+    class Meta:
+        model = Class
+        exclude = ('students',)
+        widgets = {
+            'description': forms.Textarea(),
+        }
+
+    def __init__(self, creator, *args, **kwargs):
+        super(ClassEditForm, self).__init__(*args, **kwargs)
+        choices = Lesson.objects.filter(creator=creator)
+        self.fields['lessons'].queryset = choices
 
 
 class QuestionForm(forms.ModelForm):
