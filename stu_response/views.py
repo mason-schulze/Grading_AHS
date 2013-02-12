@@ -181,6 +181,12 @@ def editClass(request, class_id):
 
 
 @user_passes_test(lambda u: u.is_staff)
+def viewClasses(request):
+    classes = Class.objects.filter(creator=request.user)
+    return render_to_response('stu_response/class_list.html', {"classes": classes}, context_instance=RequestContext(request))
+
+
+@user_passes_test(lambda u: u.is_staff)
 def getResponses(request, lesson_id, q_num=None, stu_id=None):
     lesson = get_object_or_404(Lesson, key=lesson_id)
 
