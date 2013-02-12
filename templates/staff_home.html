@@ -59,7 +59,9 @@ $(document).ready(function(){
             <tr class="lesson">
                 <td class="name">
                     <div class="display">
-                        
+                        <a title="View {{l.lesson.name}} Responses" href="{{l.lesson.get_response_url}}1/">{{l.lesson}}</a> 
+                        <img title="Edit Lesson" data-link="{{l.lesson.get_edit_url}}" class="icon" src="/static/images/edit.png"/>
+                        <img class="icon" title="View Lesson" src="/static/images/view.png" data-link="{{l.lesson.get_view_url}}"/>
                     </div>
                     <div class="details">
                         <p>
