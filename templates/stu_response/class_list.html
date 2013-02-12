@@ -1,0 +1,25 @@
+{%extends 'base.html'%}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/tables.css"/>
+{% endblock head %}
+
+{%block content%}
+    <h1>Classes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Class Name</th>
+                <th>Key</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        {%for c in classes%}
+            <tr class="row">
+                <td>{{c.name}}</td>
+                <td>{{c.uid}}</td>
+                <td>{{c.description}}</td>
+            </tr>
+        {%endfor%}
+    </table>
+{%endblock%}
