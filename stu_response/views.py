@@ -222,13 +222,15 @@ def home(request):
         if request.user.is_staff:
             lesson_set = Lesson.objects.filter(creator=request.user).order_by('-creation_date')
             for x in lesson_set:
+                students = x.getStudentsResponded()
+                students_complete = x.getStudentsCompleted()
                 curr = {
                     "lesson": x,
                     "creator": x.creator,
-                    "num_users": len(x.getStudentsResponded()),
-                    "num_complete": len(x.getStudentsCompleted()),
-                    "students": x.getStudentsResponded(),
-                    "students_complete": x.getStudentsCompleted(),
+                    "num_users": len(students),
+                    "num_complete": len(students_complete),
+                    "students": students,
+                    "students_complete": students_complete,
                 }
                 lessons.append(curr)
             return render_to_response("staff_home.html", {"lessons": lessons}, context_instance=RequestContext(request))
