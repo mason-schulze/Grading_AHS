@@ -223,21 +223,30 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
 
 @user_passes_test(lambda u: u.is_staff)
 def getStudentsInLesson(request, lesson_id):
-    lesson = get_object_or_404(Lesson, id=lesson_id)
+    lesson = get_object_or_404(Lesson, key=lesson_id)
     if request.user != lesson.creator:
         return HttpResponseForbidden("You do not have access to this page.")
-    sample_q = lesson.questions.all().order_by('q_num')[0]
-    responses = Response.objects.filter(question=sample_q)
-    users = []
-    for r in responses:
+    users = {
+            "working": [],
+            "completed": [],
+    }
+    temp = []
+    for u in lesson.getStudentsCompleted():
+        temp.append(u)
         curr = {
-                "user_id": r.student.id,
-                "username": r.student.username,
-                "first_name": r.student.first_name,
-                "last_name": r.student.last_name,
-                "full_name": r.student.get_full_name(),
+            "first": u.first_name,
+            "last": u.last_name,
+            "username": u.username,
+        }
+        users["completed"].append(curr)
+    for u in lesson.getStudentsResponded():
+        if u not in temp:
+            curr = {
+                "first": u.first_name,
+                "last": u.last_name,
+                "username": u.username,
             }
-        users.append(curr)
+            users["working"].append(curr)
     return HttpResponse(simplejson.dumps(users), mimetype='application/json')
 
 
