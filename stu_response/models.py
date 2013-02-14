@@ -106,6 +106,9 @@ class Lesson(models.Model):
     def get_response_url(self):
         return "/responses/" + self.key + "/"
 
+    def get_stu_url(self):
+        return "/ajax/lesson/" + self.key + "/students/"
+
     def getNumCompleted(self, user_id):
         user = User.objects.get(pk=user_id)
         responses = self.recorded_responses.filter(student=user)

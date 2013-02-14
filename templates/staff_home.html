@@ -14,8 +14,37 @@ $(document).ready(function(){
         window.location.href = url;
         return false;
     });
+    $("a.stu_responses").click(function(){
+        var wrapper = $(this).parent();
+        $.getJSON($(this).attr("data-link"),function(data){
+            var completed = data.completed;
+            var incomplete = data.working;
+            for(x in incomplete){
+                wrapper.append("<span class='error'>"+incomplete[x].username+" </span>");
+            }
+            for(x in completed){
+                wrapper.append("<span class='valid'>"+completed[x].username+" </span>");
+            }            
+        });
+        $(this).remove();
+    });
     $(".lesson").click(function(){
         $($($(this).children(".name")).children(".details")).slideToggle(200);
+        var url = $(this).find(".stu_responses").attr("data-link");
+        var wrapper = $(this).find(".stu_responses");
+        wrapper.html("");
+        var cmp_span = $(this).find(".completed");
+        $.getJSON(url,function(data){
+            var completed = data.completed;
+            var incomplete = data.working;
+            for(x in incomplete){
+                wrapper.append("<span class='error'>"+incomplete[x].username+" </span>");
+            }
+            for(x in completed){
+                wrapper.append("<span class='valid'>"+completed[x].username+" </span>");
+            }
+            cmp_span.text(completed.length+"/"+(completed.length+incomplete.length));
+        });
     });
     $(".icon").click(function(){
         var url = $(this).attr("data-link");
@@ -52,7 +81,6 @@ $(document).ready(function(){
             <tr>
                 <th>Lesson Name</th>
                 <th class="creator">Creator</th>
-                <th class="users">Completed</th>
             </tr>
         </thead>
         {% for l in lessons %}
@@ -71,19 +99,15 @@ $(document).ready(function(){
                             <strong>Last Edit:</strong> {{l.lesson.last_edit_date}}
                         </p>
                         <p>
+                            <strong>Completed: </strong> <span class="completed"></span>
+                        </p>
+                        <p>
                             <strong>Response Recieved:</strong>
-                            {% for u in l.students %}
-                                {%if u in l.students_complete%}
-                                    <span class="valid">{{u}}</span>
-                                {%else%}
-                                    <span class="error">{{u}}</span>
-                                {%endif%}
-                            {%endfor%}
+                            <span class="stu_responses" data-link="{{l.lesson.get_stu_url}}">
                         </p>
                     </div>
                 </td>
                 <td class="creator">{{l.creator.get_full_name}}</td>
-                <td class="users">{{l.num_complete}}/{{l.num_users}}</td>
             </tr>
            
         {% endfor %}
