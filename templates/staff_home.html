@@ -38,7 +38,7 @@ var getUsers = function(){
         for(x in completed){
             wrapper.append("<span class='valid'>"+completed[x].username+" </span>");
         }
-        cmp_span.text(completed.length+"/"+(completed.length+incomplete.length));
+        cmp_span.html(completed.length+"/"+(completed.length+incomplete.length));
     });
     $(this).unbind('click', getUsers);
 };
@@ -93,7 +93,7 @@ var getUsers = function(){
                         </p>
                         <p>
                             <strong>Response Recieved:</strong>
-                            <span class="stu_responses" data-link="{{l.lesson.get_stu_url}}">
+                            <span class="stu_responses" data-link="{{l.lesson.get_stu_url}}"><img src="/static/images/loader.gif" alt="Loading..."/></span>
                         </p>
                     </div>
                 </td>
