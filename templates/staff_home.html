@@ -14,37 +14,9 @@ $(document).ready(function(){
         window.location.href = url;
         return false;
     });
-    $("a.stu_responses").click(function(){
-        var wrapper = $(this).parent();
-        $.getJSON($(this).attr("data-link"),function(data){
-            var completed = data.completed;
-            var incomplete = data.working;
-            for(x in incomplete){
-                wrapper.append("<span class='error'>"+incomplete[x].username+" </span>");
-            }
-            for(x in completed){
-                wrapper.append("<span class='valid'>"+completed[x].username+" </span>");
-            }            
-        });
-        $(this).remove();
-    });
+    $(".lesson").bind('click', getUsers);
     $(".lesson").click(function(){
-        $($($(this).children(".name")).children(".details")).slideToggle(200);
-        var url = $(this).find(".stu_responses").attr("data-link");
-        var wrapper = $(this).find(".stu_responses");
-        wrapper.html("");
-        var cmp_span = $(this).find(".completed");
-        $.getJSON(url,function(data){
-            var completed = data.completed;
-            var incomplete = data.working;
-            for(x in incomplete){
-                wrapper.append("<span class='error'>"+incomplete[x].username+" </span>");
-            }
-            for(x in completed){
-                wrapper.append("<span class='valid'>"+completed[x].username+" </span>");
-            }
-            cmp_span.text(completed.length+"/"+(completed.length+incomplete.length));
-        });
+        $($($(this).children(".name")).children(".details")).slideToggle(200);        
     });
     $(".icon").click(function(){
         var url = $(this).attr("data-link");
@@ -52,6 +24,24 @@ $(document).ready(function(){
         return false;
     });
 });
+var getUsers = function(){
+    var url = $(this).find(".stu_responses").attr("data-link");
+    var wrapper = $(this).find(".stu_responses");
+    wrapper.html("");
+    var cmp_span = $(this).find(".completed");
+    $.getJSON(url,function(data){
+        var completed = data.completed;
+        var incomplete = data.working;
+        for(x in incomplete){
+            wrapper.append("<span class='error'>"+incomplete[x].username+" </span>");
+        }
+        for(x in completed){
+            wrapper.append("<span class='valid'>"+completed[x].username+" </span>");
+        }
+        cmp_span.text(completed.length+"/"+(completed.length+incomplete.length));
+    });
+    $(this).unbind('click', getUsers);
+};
 </script>
 <style type="text/css">
 .details{
