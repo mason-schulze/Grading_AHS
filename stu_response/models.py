@@ -47,6 +47,9 @@ class Response(models.Model):
     def get_format_date(self):
         return timezone.make_naive(self.edit_date, timezone.get_current_timezone()).strftime("%b. %d, %Y, %I:%M %p")
 
+    def cmp_and_viewed(self):
+        return self.viewed and not self.is_blank()
+
 
 class Lesson(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -86,7 +89,7 @@ class Lesson(models.Model):
             student = User.objects.get(pk=stu_id)
             q_set = self.questions.all().order_by('q_num')
             for q in q_set:
-                q_responses = Response.objects.filter(question=q, student=student)
+                q_responses = Response.objects.filter(question=q, student=student).exclude(text="")
                 if len(q_responses) != 0:
                     lesson_responses.append(q_responses)
         else:

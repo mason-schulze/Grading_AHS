@@ -153,6 +153,7 @@ function update(){
                 }
             }
         }
+        $("#respondents span").text(data.responses.length);
         addTableListeners();
         $(".loader").hide();
     });
@@ -244,6 +245,9 @@ td{
 h1{
     margin: 0;
 }
+#respondents{
+    float:right;
+}
 </style>
 {%endblock%}
 
@@ -269,6 +273,9 @@ h1{
         {%endif%}        
     </div>
     <h1>{{lesson.name}}</h1>
+    <p id="respondents">
+        Responses: <span></span>
+    </p>
     {%if question%}
     <p>
         <strong>Question {{question.q_num}}:</strong> {{question.text}}
