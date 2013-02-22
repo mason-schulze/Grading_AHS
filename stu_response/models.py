@@ -159,6 +159,9 @@ class Class(models.Model):
             self.uid = key
         super(Class, self).save(*args, **kwargs)
 
+    def get_edit_url(self):
+        return "/class/edit/" + self.uid + "/"
+
 
 class ClassForm(forms.ModelForm):
 
@@ -174,7 +177,7 @@ class ClassEditForm(forms.ModelForm):
 
     class Meta:
         model = Class
-        exclude = ('students',)
+        exclude = ('students', 'uid')
         widgets = {
             'description': forms.Textarea(),
         }

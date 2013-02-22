@@ -2,6 +2,11 @@
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="/static/css/tables.css"/>
+    <style type="text/css">
+        .row:hover{
+            background: #FFFFCD;
+        }
+    </style>
 {% endblock head %}
 
 {%block content%}
@@ -16,7 +21,7 @@
         </thead>
         {%for c in classes%}
             <tr class="row">
-                <td>{{c.name}}</td>
+                <td><a href="{{c.get_edit_url}}">{{c.name}}</a></td>
                 <td>{{c.uid}}</td>
                 <td>{{c.description}}</td>
             </tr>

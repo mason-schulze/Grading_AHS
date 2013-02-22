@@ -49,6 +49,10 @@ tr:hover{
     color:blue;
     text-decoration: underline;
 }
+tr a:hover{
+    color:blue;
+    text-decoration: underline;
+}
 td{
     padding:0px 10px;
 }

@@ -1,0 +1,61 @@
+{%extends 'base.html'%}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/multi-select.css"/>
+        <script type="text/javascript" src="/static/js/jquery.js"></script>
+        <script type="text/javascript" src="/static/js/jquery.multi-select.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('select').multiSelect({
+                    selectableHeader:"Available", 
+                    selectionHeader:"In Class"
+                });
+                
+            });
+        </script>
+    <style type="text/css">
+        .labels{
+            font-size: 1.2em;
+            padding:10px;
+            vertical-align: top;
+        }
+        #form-container{
+            padding:10px;
+        }
+        .fields{
+            padding:5px;
+        }
+        input[type=submit]{
+            margin:20px 0px;
+            font-weight: bold;
+        }
+        .help_text{
+            font-size: .7em;
+            color:gray;
+            width:150px;
+        }
+    </style>
+{% endblock head %}
+{% block content %}
+    {%if class%}
+        <h1>Edit Class</h1>
+        <div>
+            <strong>UID: </strong> {{class.uid}}
+        </div> 
+    {%else%}
+        <h1>Create Class</h1>       
+    {%endif%}
+    <div>
+        <form method="post">
+            <table>
+                {%for field in form%}
+                    <tr>
+                        <td class="labels">{{field.label_tag}}</td>
+                        <td class="fields">{{field}}</td>
+                        <td class="help_text">{{field.help_text}}</td>
+                    </tr>
+                {%endfor%}
+            </table>
+            <input type="submit" value="{{submit_text}}"/> 
+        </form>
+    </div>
+{% endblock content %}

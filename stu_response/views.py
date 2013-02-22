@@ -157,10 +157,10 @@ def createClass(request):
             new_class = form.save(commit=False)
             new_class.creator = request.user
             new_class.save()
-            return redirect('/')
+            return redirect('/account/classes/')
     else:
         form = ClassForm()
-    return render_to_response("form_base.html", {"form": form, "submit_text": "Add Class"}, context_instance=RequestContext(request))
+    return render_to_response("stu_response/class_form.html", {"form": form, "submit_text": "Add Class"}, context_instance=RequestContext(request))
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -171,10 +171,10 @@ def editClass(request, class_id):
             form = ClassEditForm(data=request.POST, instance=c, creator=request.user)
             if form.is_valid():
                 form.save()
-                return redirect('/home/')
+                return redirect('/account/classes/')
         else:
             form = ClassEditForm(instance=c, creator=request.user)
-        return render_to_response('form_base.html', {"form": form, "submit_text": "Submit Class", "title": "Edit question", "success": "false"}, context_instance=RequestContext(request))
+        return render_to_response('stu_response/class_form.html', {"class": c, "form": form, "submit_text": "Submit Class", "title": "Edit question", "success": "false"}, context_instance=RequestContext(request))
     else:
         # Is the user is not the creator of the question (or staff)
         return redirect('/')
