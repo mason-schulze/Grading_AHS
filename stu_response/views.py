@@ -192,7 +192,9 @@ def listClasses(request):
 @login_required
 def viewClass(request, class_id):
     c = get_object_or_404(Class, uid=class_id)
-    if request.user not in c.students.all():
+    if request.user == c.creator or request.user in c.teachers.all():
+        return render_to_response("stu_response/class_view.html", {"class": c}, context_instance=RequestContext(request))
+    elif request.user not in c.students.all():
         if request.method == "POST":
             form = ClassRegistrationForm(data=request.POST)
             if request.POST.get("password", False) and request.POST.get("password") == c.password:

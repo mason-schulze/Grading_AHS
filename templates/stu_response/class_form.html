@@ -39,7 +39,7 @@
     {%if class%}
         <h1>Edit Class</h1>
         <div>
-            <strong>UID: </strong> {{class.uid}}
+            <strong>UID: </strong> <a href="/class/{{class.uid}}/">{{class.uid}}</a>
         </div> 
     {%else%}
         <h1>Create Class</h1>       

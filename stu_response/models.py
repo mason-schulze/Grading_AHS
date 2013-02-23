@@ -172,7 +172,7 @@ class Class(models.Model):
     teachers = models.ManyToManyField(User, related_name='+', blank=True)
     students = models.ManyToManyField(User, blank=True)
     password = models.CharField(max_length=50, help_text='A password required to the class.')
-    lessons = models.ManyToManyField(Lesson, blank=True)
+    lessons = models.ManyToManyField(Lesson, blank=True, help_text="Select lessons to be seen by this class.")
     uid = models.CharField(max_length=200, unique=True)
 
     def save(self, *args, **kwargs):
@@ -182,6 +182,9 @@ class Class(models.Model):
                 key = hex(random.getrandbits(32)).rstrip("L").lstrip("0x")
             self.uid = key
         super(Class, self).save(*args, **kwargs)
+
+    def get_view_url(self):
+        return "/class/" + self.uid + "/"
 
     def get_edit_url(self):
         return "/class/edit/" + self.uid + "/"
@@ -195,7 +198,7 @@ class ClassForm(forms.ModelForm):
 
     class Meta:
         model = Class
-        fields = ('name', 'description', 'password',)
+        fields = ('name', 'description', 'password', 'lessons')
         widgets = {
             'description': forms.Textarea(),
         }
@@ -205,7 +208,7 @@ class ClassEditForm(forms.ModelForm):
 
     class Meta:
         model = Class
-        exclude = ('students', 'uid', 'teachers')
+        fields = ('name', 'description', 'password', 'lessons', 'students')
         widgets = {
             'description': forms.Textarea(),
         }
