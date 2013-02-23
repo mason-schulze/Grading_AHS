@@ -3,7 +3,11 @@
     
 {% endblock head %}
 {% block content %}
-    <h1>{{class.name}}</h1>
+    {%if not user.is_staff%}
+        <h1>{{class.name}} <button onclick="window.location.href='/class/removeself/{{class.uid}}/'">Leave Class</button></h1>
+    {%else%}
+        <h1>{{class.name}}</h1>
+    {%endif%}
     <h2>Description:</h2>
     <p>
         {{class.description}}

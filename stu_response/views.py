@@ -74,10 +74,8 @@ def editLesson(request, lesson_id):
 def deleteLesson(request, lesson_id):
     lesson = get_object_or_404(Lesson, key=lesson_id)
     if lesson.creator == request.user:
-        for r in lesson.recorded_responses.all():
-            r.delete()
-        for q in lesson.questions.all():
-            q.delete()
+        lesson.recorded_responses.all().delete()
+        lesson.questions.all().delete()
         lesson.delete()
         return HttpResponse(simplejson.dumps({"success": True}), mimetype="application/json")
     else:
@@ -186,8 +184,33 @@ def editClass(request, class_id):
 
 
 @user_passes_test(lambda u: u.is_staff)
+def deleteClass(request, class_id):
+    c = get_object_or_404(Class, uid=class_id)
+    if c.creator == request.user:
+        c.delete()
+        if request.is_ajax():
+            return HttpResponse(simplejson.dumps({"success": True}), mimetype="application/json")
+        else:
+            return redirect('/account/classes/')
+    if request.is_ajax():
+        return HttpResponseForbidden(simplejson.dumps({"success": False}), mimetype="application/json")
+    return redirect('/account/classes/')
+
+
+@login_required
+def removeSelfFromClass(request, class_id):
+    c = get_object_or_404(Class, uid=class_id)
+    if request.user in c.students.all():
+        c.students.remove(request.user)
+    return redirect('/account/classes/')
+
+
+@login_required
 def listClasses(request):
-    classes = Class.objects.filter(creator=request.user)
+    if request.user.is_staff:
+        classes = Class.objects.filter(creator=request.user)
+    else:
+        classes = request.user.class_set.all()
     return render_to_response('stu_response/class_list.html', {"classes": classes}, context_instance=RequestContext(request))
 
 

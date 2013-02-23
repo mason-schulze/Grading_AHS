@@ -210,7 +210,13 @@ class ClassForm(forms.ModelForm):
         self.fields['lessons'].help_text = 'Select lessons to be seen by this class.'
 
 
+class ClassStudentMCField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.get_full_name() + " (" + obj.username + ")"
+
+
 class ClassEditForm(forms.ModelForm):
+    students = ClassStudentMCField(queryset=None)
 
     class Meta:
         model = Class

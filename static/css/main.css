@@ -9,6 +9,11 @@
 h1,h2,h3,h4,h5,h6, th{
     font-family: Ubuntu;
 }
+h1 button{
+    padding:5px;
+    vertical-align:middle;
+    float:right;
+}
 div,a,p, td{
     font-family: DroidSans;
 }

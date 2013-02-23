@@ -80,7 +80,7 @@ function addListeners(){
     });
     $("#delete-lesson").click(function(e){
         e.preventDefault();
-        if(confirm("Are you sure?")){
+        if(confirm("Are you sure you want to delete this lesson?")){
             $.get("/lesson/delete/{{lesson.key}}/", function(data){
                 if(data.success){
                     window.location.href = "/home/";
@@ -119,21 +119,17 @@ function addListeners(){
 .hidden{
     display:none;
 }
-#delete-lesson{
-    float:right;
-}
 </style>
 {%endblock%}
 
 {%block content %}
 {%if lesson%}
-    <h1>Edit Lesson</h1>
+    <h1>Edit Lesson <button id="delete-lesson"><img height='14px' src="/static/images/trash.png"/>Delete Lesson</button></h1>
 {%else%}
     <h1>Create Lesson</h1>
 {%endif%}
 <form id="lesson_form" method="post">
-    {%if lesson%}
-        <button id="delete-lesson">Delete Lesson</button> 
+    {%if lesson%}        
         <h3>Lesson Name: <input type="text" name="lesson_name" tabindex="1" value="{{lesson.name}}"/></h3>
 
         <div id="question-container">

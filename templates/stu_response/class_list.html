@@ -30,10 +30,6 @@
         .descript{
             width:350px;
         }
-        button{
-            padding:5px;
-            vertical-align:middle;
-        }
     </style>
 {% endblock head %}
 
@@ -52,7 +48,9 @@
                 <td class="name">
                     <div class="display">
                         <a title="View Class" href="{{c.get_view_url}}">{{c.name}}</a>
-                        <img title="Edit Class" data-link="{{c.get_edit_url}}" class="icon" src="/static/images/edit.png"/>
+                        {%if user.is_staff%}
+                            <img title="Edit Class" data-link="{{c.get_edit_url}}" class="icon" src="/static/images/edit.png"/>
+                        {%endif%}
                     </div>
                 </td>
                 <td class="key">{{c.uid}}</td>
