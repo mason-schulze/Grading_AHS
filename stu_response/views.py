@@ -155,14 +155,16 @@ def viewResponses(request, lesson_id, q_num=None, stu_id=None):
 @user_passes_test(lambda u: u.is_staff)
 def createClass(request):
     if request.method == "POST":
-        form = ClassForm(data=request.POST)
+        form = ClassForm(data=request.POST, creator=request.user)
         if form.is_valid():
             new_class = form.save(commit=False)
             new_class.creator = request.user
             new_class.save()
+            for l in form.cleaned_data['lessons']:
+                new_class.lessons.add(l)
             return redirect('/account/classes/')
     else:
-        form = ClassForm()
+        form = ClassForm(creator=request.user)
     return render_to_response("stu_response/class_form.html", {"form": form, "submit_text": "Add Class"}, context_instance=RequestContext(request))
 
 

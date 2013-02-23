@@ -203,6 +203,12 @@ class ClassForm(forms.ModelForm):
             'description': forms.Textarea(),
         }
 
+    def __init__(self, creator, *args, **kwargs):
+        super(ClassForm, self).__init__(*args, **kwargs)
+        choices = Lesson.objects.filter(creator=creator)
+        self.fields['lessons'].queryset = choices
+        self.fields['lessons'].help_text = 'Select lessons to be seen by this class.'
+
 
 class ClassEditForm(forms.ModelForm):
 
@@ -215,8 +221,12 @@ class ClassEditForm(forms.ModelForm):
 
     def __init__(self, creator, *args, **kwargs):
         super(ClassEditForm, self).__init__(*args, **kwargs)
-        choices = Lesson.objects.filter(creator=creator)
-        self.fields['lessons'].queryset = choices
+        c_choices = Lesson.objects.filter(creator=creator)
+        self.fields['lessons'].queryset = c_choices
+        s_choices = User.objects.filter(is_staff=False)
+        self.fields['students'].queryset = s_choices
+        self.fields['lessons'].help_text = 'Select lessons to be seen by this class.'
+        self.fields['students'].help_text = 'Select students to be in this class.'
 
 
 class QuestionForm(forms.ModelForm):
