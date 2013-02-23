@@ -73,3 +73,6 @@ td{
 .icon:hover{
     opacity: 1;
 }
+.orderable{
+    cursor: pointer;        
+}

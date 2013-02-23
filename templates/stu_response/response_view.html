@@ -122,7 +122,17 @@ function addTableListeners(){
             $(this).text("show");
             $(this).css("color",'lightgreen');
             $(this).next("p").slideUp();
-        });      
+        });  
+    $(".orderable").unbind();
+    $(".orderable").click(function(){
+        var temp = $(this).attr("data-order");
+        if(order.trim() == temp.trim()){
+            order = "-" + order;
+        }else{
+            order = temp;
+        }
+        update();
+    });  
 }
 
 var responseTemplate = "\
@@ -144,7 +154,7 @@ function update(){
     }else{
         url = url.substring(url.indexOf("/responses"));
     }
-    $.getJSON("/ajax"+url, {"classes":classFilter}, function(data){
+    $.getJSON("/ajax"+url, {"classes":classFilter, "order":order}, function(data){
         $(".response").remove();
         if($(".q_heading").length!=0){
             for(x in data.responses){
@@ -310,10 +320,10 @@ h1{
     <table id="responses">
         <thead>
             <tr id="headings">
-                <th>Student</th>
-                <th>Last Edit Date</th>
+                <th class="orderable" data-order="student">Student</th>
+                <th class="orderable" data-order="edit_date">Last Edit Date</th>
                 <th>Response</th>
-                <th>Seen <br/><a href='#' id='selAll'>All</a>|<a href='#' id='selNone'>None</a></th>
+                <th class="orderable" data-order="viewed">Seen <br/><a href='#' id='selAll'>All</a>|<a href='#' id='selNone'>None</a></th>
             </tr>  
         </thead>      
         {%for q in questions%}  

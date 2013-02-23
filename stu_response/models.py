@@ -80,11 +80,17 @@ class Lesson(models.Model):
                 studentsDone.append(s)
         return studentsDone
 
-    def getResponses(self, q_num=None, stu_id=None):
+    def getResponses(self, q_num=None, stu_id=None, order="-edit_date"):
         lesson_responses = []
         if q_num:
             question = self.questions.get(q_num=q_num)
-            lesson_responses.append(Response.objects.filter(question=question).exclude(text="").order_by("-edit_date"))
+            responses = Response.objects.filter(question=question).exclude(text="").order_by(order)
+            if order.find("student") != -1:
+                reverse = False
+                if order.find("-") != -1:
+                    reverse = True
+                responses = sorted(responses, key=lambda r: r.student.first_name.lower(), reverse=reverse)
+            lesson_responses.append(responses)
         elif stu_id:
             student = User.objects.get(pk=stu_id)
             q_set = self.questions.all().order_by('q_num')
@@ -95,7 +101,7 @@ class Lesson(models.Model):
         else:
             q_set = self.questions.all().order_by('q_num')
             for q in q_set:
-                q_responses = Response.objects.filter(question=q).exclude(text="").order_by("-edit_date")
+                q_responses = Response.objects.filter(question=q).exclude(text="").order_by(order)
                 if len(q_responses) != 0:
                     lesson_responses.append(q_responses)
         return lesson_responses

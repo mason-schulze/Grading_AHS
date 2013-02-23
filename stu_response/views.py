@@ -243,8 +243,10 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
     if request.user != lesson.creator:
         return HttpResponseForbidden("You do not have access to this page.")
 
-    # lesson_set = lesson.questions.all().order_by('q_num')
-    responses = lesson.getResponses(stu_id=stu_id, q_num=q_num)
+    if request.GET.get("order", False) and request.GET.get("order") != "":
+        responses = lesson.getResponses(stu_id=stu_id, q_num=q_num, order=request.GET.get("order"))
+    else:
+        responses = lesson.getResponses(stu_id=stu_id, q_num=q_num)
     response_set = []
     classes = None
     if request.GET.get("classes", False) and request.GET.get("classes") != "":
