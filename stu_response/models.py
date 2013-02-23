@@ -65,11 +65,10 @@ class Lesson(models.Model):
         return self.name
 
     def getStudentsResponded(self):
-        responses = self.recorded_responses.all()
+        respondents = self.respondents.all()
         users = []
-        for r in responses:
-            if r.student not in users:
-                users.append(r.student)
+        for r in respondents:
+            users.append(r)
         return users
 
     def getStudentsCompleted(self):
@@ -121,6 +120,15 @@ class Lesson(models.Model):
             if not r.is_blank():
                 completed += 1
         return completed
+
+    # Temporary method to ease migration to new student getting system
+    def addPrevResponses(self):
+        users = []
+        for r in self.recorded_responses.all():
+            if r.student not in users:
+                users.append(r.student)
+        for u in users:
+            self.respondents.add(u)
 
     def save(self, *args, **kwargs):
         if self.key == None or self.key == "":
