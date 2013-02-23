@@ -55,8 +55,9 @@ class Lesson(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     last_edit_date = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=200)
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey(User, related_name='created_lessons')
     questions = models.ManyToManyField(Question, blank=True)
+    respondents = models.ManyToManyField(User, related_name='responded_lessons', blank=True)
     recorded_responses = models.ManyToManyField(Response, blank=True)
     key = models.CharField(unique=True, max_length=200)
 
@@ -72,7 +73,7 @@ class Lesson(models.Model):
         return users
 
     def getStudentsCompleted(self):
-        students = self.getStudentsResponded()
+        students = self.respondents.all()
         studentsDone = []
         for s in students:
             numDone = self.getNumCompleted(s.id)
@@ -137,18 +138,25 @@ def getPercentComplete(user, lesson):
 
 
 def getRespondedLessons(user):
-    all_lessons = Lesson.objects.all().order_by('-creation_date')
-    lessons = []
-    for l in all_lessons:
-        if user in l.getStudentsResponded():
-            lessons.append(l)
-    return lessons
+    all_lessons = []
+    responded_lessons = user.responded_lessons.order_by('-creation_date')
+    class_lessons = []
+    for c in user.class_set.all():
+        class_lessons.append(c.lessons.all())
+    for lesson_set in class_lessons:
+        for l in lesson_set:
+            all_lessons.append(l)
+    for l in responded_lessons:
+        if l not in all_lessons:
+            all_lessons.append(l)
+    return all_lessons
 
 
 class Class(models.Model):
     name = models.CharField(max_length=100, help_text='Name of the class')
     creator = models.ForeignKey(User, related_name='+', editable=False)
     description = models.CharField(max_length=2000, help_text='A short description.')
+    teachers = models.ManyToManyField(User, related_name='+', blank=True)
     students = models.ManyToManyField(User, blank=True)
     password = models.CharField(max_length=50, help_text='A password required to the class.')
     lessons = models.ManyToManyField(Lesson, blank=True)
@@ -166,6 +174,10 @@ class Class(models.Model):
         return "/class/edit/" + self.uid + "/"
 
 
+class ClassRegistrationForm(forms.Form):
+    password = forms.CharField(max_length=50)
+
+
 class ClassForm(forms.ModelForm):
 
     class Meta:
@@ -180,7 +192,7 @@ class ClassEditForm(forms.ModelForm):
 
     class Meta:
         model = Class
-        exclude = ('students', 'uid')
+        exclude = ('students', 'uid', 'teachers')
         widgets = {
             'description': forms.Textarea(),
         }

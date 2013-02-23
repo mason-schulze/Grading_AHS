@@ -1,10 +1,11 @@
 # Create your views here.
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete, ClassForm, ClassEditForm, Class
+from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete, ClassForm, ClassEditForm, Class, ClassRegistrationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import simplejson
+from django.forms.util import ErrorList, ErrorDict
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.template import RequestContext
 
@@ -109,6 +110,8 @@ def viewLesson(request, lesson_id):
             }
             responses.append(curr)
     if request.method == "POST":
+        if request.user not in lesson.respondents.all():
+            lesson.respondents.add(request.user)
         responses = simplejson.loads(request.POST['responses'])
         for r in responses:
             changed = False
@@ -181,9 +184,28 @@ def editClass(request, class_id):
 
 
 @user_passes_test(lambda u: u.is_staff)
-def viewClasses(request):
+def listClasses(request):
     classes = Class.objects.filter(creator=request.user)
     return render_to_response('stu_response/class_list.html', {"classes": classes}, context_instance=RequestContext(request))
+
+
+@login_required
+def viewClass(request, class_id):
+    c = get_object_or_404(Class, uid=class_id)
+    if request.user not in c.students.all():
+        if request.method == "POST":
+            form = ClassRegistrationForm(data=request.POST)
+            if request.POST.get("password", False) and request.POST.get("password") == c.password:
+                c.students.add(request.user)
+                return redirect("/home/")
+            else:
+                form._errors = ErrorDict()
+                form._errors['password'] = ErrorList([u"Invalid password. Please check your password and try again."])
+        else:
+            form = ClassRegistrationForm()
+        return render_to_response("form_base.html", {"form": form, "submit_text": "Join Class", "form_title": c.name + " requires a password to join."}, context_instance=RequestContext(request))
+    else:
+        return render_to_response("stu_response/class_view.html", {"class": c}, context_instance=RequestContext(request))
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -268,6 +290,7 @@ def home(request):
         if request.user.is_staff:
             lesson_set = Lesson.objects.filter(creator=request.user).order_by('-creation_date')
             for x in lesson_set:
+                # getting responded users is slow
                 # students = x.getStudentsResponded()
                 # students_complete = x.getStudentsCompleted()
                 curr = {

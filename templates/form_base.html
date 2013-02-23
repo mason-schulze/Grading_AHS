@@ -7,10 +7,6 @@
         text-align: right;
         vertical-align: top;
     }
-    table{
-        width:600px;
-        margin: 0 auto;        
-    }
     #form-container{
         padding:10px;
     }
@@ -30,19 +26,27 @@
 {%endblock%}
 {%block content%}
     <div id="form-container">
+        <h1>{{form_title}}</h1>
         {% block form%}
-        <form method='post'>
-            <table>
-                {%for field in form%}
-                    <tr>
-                        <td class="labels">{{field.label_tag}}</td>
-                        <td class="fields">{{field}}</td>
-                        <td class="help_text">{{field.help_text}}</td>
-                    </tr>
-                {%endfor%}
-            </table>
-            <input type="submit" value="{{submit_text}}"/> 
-        </form>
+            <div class="error">
+                {% for field in form %}
+                    {{field.errors}}
+                {% endfor %}
+            </div>
+            <form method='post'>
+                <table>
+                    {%for field in form%}
+                        <tr>
+                            <td class="labels">{{field.label_tag}}</td>
+                            <td class="fields">{{field}}</td>
+                            {%if not field.errors%}
+                                <td class="help_text">{{field.help_text}}</td>
+                            {%endif%}
+                        </tr>
+                    {%endfor%}
+                </table>
+                <input type="submit" value="{{submit_text}}"/> 
+            </form>
         {%endblock%}        
     </div>
 {%endblock%}    
