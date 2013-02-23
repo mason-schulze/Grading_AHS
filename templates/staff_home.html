@@ -33,10 +33,10 @@ var getUsers = function(){
         var completed = data.completed;
         var incomplete = data.working;
         for(x in incomplete){
-            wrapper.append("<span class='error'>"+incomplete[x].username+" </span>");
+            wrapper.append("<span class='error'>"+incomplete[x].first+" "+incomplete[x].last+" ("+incomplete[x].username+"), </span>");
         }
         for(x in completed){
-            wrapper.append("<span class='valid'>"+completed[x].username+" </span>");
+            wrapper.append("<span class='valid'>"+ completed[x].first+" "+completed[x].last+" ("+completed[x].username+"), </span>");
         }
         cmp_span.html(completed.length+"/"+(completed.length+incomplete.length));
     });
