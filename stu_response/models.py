@@ -139,6 +139,11 @@ class Lesson(models.Model):
         super(Lesson, self).save(*args, **kwargs)
 
 
+def fixResponses():
+    for l in Lesson.objects.all():
+        l.addPrevResponses()
+
+
 def getPercentComplete(user, lesson):
     total = lesson.questions.count()
     completed = lesson.getNumCompleted(user_id=user.id)
