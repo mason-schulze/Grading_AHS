@@ -7,8 +7,11 @@
 var lesson_id = {{lesson_id}};
 var lesson_key = "{{lesson_key}}";
 $(document).ready(function(){
-    // Updates the response table
-    update();
+    // Check url for class
+    if(window.location.href.match(/\=[a-zA-Z0-9]+/)!=null){
+        classFilter = window.location.href.match(/classes\=[a-zA-Z0-9]+/).toString().replace("classes=", "");
+        $("#classSelect option[value="+classFilter+"]").attr("selected","selected");
+    }
 
     // Check url for selected user
     if(window.location.href.match(/\/u\/\d+/)!=null){
@@ -18,21 +21,34 @@ $(document).ready(function(){
 
     // Check url for selected question
     if(window.location.href.match(/\/responses\/[a-zA-Z0-9]+\/\d+\//)!=null){
-            var currQ = window.location.href.match(/\d+\/$/).toString().replace("/","");
-            $("#qSelect option[value="+currQ+"]").attr("selected","selected");
-        }
+        var currQ = window.location.href.match(/\/\d+\//).toString().replace(/\//g, "");
+        $("#qSelect option[value="+currQ+"]").attr("selected","selected");
+    }
 
     // Adds listeners for response table and topbar options
     addFilterListeners();
     addTableListeners();
+    // Updates the response table
+    update();
 });
 
+var classFilter = "";
+var order = "";
+
 function addFilterListeners(){
+    $("#classSelect").change(function(){
+        if($(this).val()!=0){
+            classFilter = $(this).val();
+        }else{
+            classFilter = "";
+        }
+        update();
+    });
     $("#qSelect").change(function(){
         if($(this).val()!=0){
-            window.location.href = "/responses/"+lesson_key+"/"+$(this).val()+"/";
+            window.location.href = "/responses/"+lesson_key+"/"+$(this).val()+"/?classes="+classFilter;
         }else{
-            window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/";
+            window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/?classes="+classFilter;
         }
     });
     $("#stuSelect").change(function(){
@@ -40,7 +56,7 @@ function addFilterListeners(){
             var user = $(this).val();
             window.location.href = "/responses/"+lesson_key+"/u/"+user+"/";
         }else{
-            window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/";
+            window.location.href = window.location.href.match(/\/responses\/[a-zA-Z0-9]+\//).toString()+"1/?classes="+classFilter;
         }
     });  
     
@@ -123,8 +139,12 @@ var responseTemplate = "\
 function update(){
     $(".loader").show();
     var url = window.location.href.toString();
-    url = url.substring(url.indexOf("/responses"));
-    $.getJSON("/ajax"+url, function(data){
+    if(url.lastIndexOf("?") != -1){
+        url = url.substring(url.indexOf("/responses"), url.lastIndexOf("?"));
+    }else{
+        url = url.substring(url.indexOf("/responses"));
+    }
+    $.getJSON("/ajax"+url, {"classes":classFilter}, function(data){
         $(".response").remove();
         if($(".q_heading").length!=0){
             for(x in data.responses){
@@ -254,7 +274,13 @@ h1{
 {%block content%}
     <div id="filter-options">  
         <img class="loader" src="/static/images/loader.gif"/>  
-        <strong>Filter Options:</strong>                   
+        <strong>Filter Options:</strong> 
+        Class <select id="classSelect">
+            <option value="0">---</option>
+            {% for c in classes %}
+                <option value="{{c.uid}}">{{c.name}}</option>
+            {% endfor %}
+        </select>                  
         Student <select id="stuSelect">
             <option value="0">---</option>
             {%for u in users%}

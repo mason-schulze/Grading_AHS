@@ -144,10 +144,11 @@ def viewResponses(request, lesson_id, q_num=None, stu_id=None):
     if request.user != lesson.creator:
         return HttpResponseForbidden("You do not have access to this page.")
     lesson_set = lesson.questions.all().order_by('q_num')
+    classes = lesson.class_set.all()
     curr_q = None
     if q_num:
         curr_q = lesson.questions.get(q_num=q_num)
-    return render_to_response("stu_response/response_view.html", {"questions": lesson_set, "lesson_key": lesson_id, "question": curr_q, "lesson": lesson, "lesson_id": lesson.id, "users": lesson.getStudentsResponded()}, context_instance=RequestContext(request))
+    return render_to_response("stu_response/response_view.html", {"questions": lesson_set, "classes": classes, "lesson_key": lesson_id, "question": curr_q, "lesson": lesson, "lesson_id": lesson.id, "users": lesson.getStudentsResponded()}, context_instance=RequestContext(request))
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -243,19 +244,11 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
         return HttpResponseForbidden("You do not have access to this page.")
 
     # lesson_set = lesson.questions.all().order_by('q_num')
-    responses = []
-    if q_num:
-        # responses.append(Response.objects.filter(question=lesson.questions.filter(q_num=q_num)).order_by("-edit_date"))
-        responses.append(lesson.getResponses(q_num=q_num))
-    elif stu_id:
-        # for question in lesson_set:
-        #     responses.append(Response.objects.filter(question=question, student=User.objects.get(pk=stu_id)))
-        responses = lesson.getResponses(stu_id=stu_id)
-    else:
-        # for question in lesson_set:
-        #     responses.append(Response.objects.filter(question=question).order_by("edit_date"))
-        responses = lesson.getResponses()
+    responses = lesson.getResponses(stu_id=stu_id, q_num=q_num)
     response_set = []
+    classes = None
+    if request.GET.get("classes", False) and request.GET.get("classes") != "":
+        classes = Class.objects.get(uid=request.GET.get("classes"))
     for x in responses:
         for r in x:
             curr = {
@@ -266,7 +259,10 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
                 "q_num": r.question.q_num,
                 "r_id": r.id,
             }
-            response_set.append(curr)
+            if classes != None and r.student in classes.students.all():
+                response_set.append(curr)
+            elif classes == None:
+                response_set.append(curr)
     return HttpResponse(simplejson.dumps({"responses": response_set}), mimetype="application/json")
 
 

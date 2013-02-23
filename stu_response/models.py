@@ -84,7 +84,7 @@ class Lesson(models.Model):
         lesson_responses = []
         if q_num:
             question = self.questions.get(q_num=q_num)
-            return Response.objects.filter(question=question).exclude(text="").order_by("-edit_date")
+            lesson_responses.append(Response.objects.filter(question=question).exclude(text="").order_by("-edit_date"))
         elif stu_id:
             student = User.objects.get(pk=stu_id)
             q_set = self.questions.all().order_by('q_num')
