@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block head %}
+    
+{% endblock head %}
+
+{% block content %}
+    <h1>Edit Account Information</h1>
+    <form method="post" action="/account/info/edit/">
+        <table>
+            <tr>
+                <th>Email</th>
+                <td>{{user.username}}</td>
+            </tr>
+            {{form.as_table}}
+        </table>
+        <input type="submit" value="Submit"/>
+    </form>
+{% endblock content %}
