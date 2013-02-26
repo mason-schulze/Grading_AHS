@@ -17,25 +17,6 @@ h1 button{
 div,a,p, td{
     font-family: DroidSans;
 }
-.messages{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    margin:0 auto;
-    width:200px;
-    padding:3px 10px;
-    text-align: center;
-    z-index: 2;
-    background-color: #E8EAE9;
-    -webkit-border-radius:0 0 10px 10px;
-    -moz-border-radius:0 0 10px 10px;
-    border-radius:0 0 10px 10px;
-    display: none;
-}
-.messages li{
-    list-style: none;
-}
 #content-container{
     width:800px;
     margin:0 auto;
@@ -55,7 +36,7 @@ div,a,p, td{
     margin-left: 20px;
     padding:5px;
 }
-#topbar #nav a, #userOptions a, #loginbox a{
+#topbar #nav a, #userOptions a{
     color:#BBBBBB;
     text-decoration: none;
     margin:0 10px;
@@ -63,13 +44,13 @@ div,a,p, td{
 #topbar #nav a:hover{
     color:orange;
 }
-#userOptions a, #loginbox a:hover{
+#userOptions a:hover{
     color:lightBlue;
 }
 #userOptions:hover{
     color:lightBlue;
 }
-#userOptions, #loginbox{
+#userOptions{
     position:absolute;
     right:30px;
     padding:5px;

@@ -91,7 +91,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
@@ -99,8 +99,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 LOGIN_URL = "/login/"
-
-LOGOUT_URL = '/logout/'
 
 LOGIN_REDIRECT_URL = '/home/'
 
@@ -127,21 +125,10 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'django_openid_auth',
     'stu_response',
     'user_manage',
 )
 
-
-AUTHENTICATION_BACKENDS = (
-    # 'django_openid_auth.auth.OpenIDBackend',
-    'django.contrib.auth.backends.ModelBackend',
-    'user_manage.auth.GoogleBackend',
-)
-
-OPENID_USE_AS_ADMIN_LOGIN = False
-
-OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.

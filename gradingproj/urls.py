@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from user_manage.views import editInfo
+from django.contrib.auth.views import login, logout, password_change, logout_then_login
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -15,10 +15,10 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$', 'django_openid_auth.views.login_begin', name='openid-login'),
-    url(r'^login-complete/$', 'django_openid_auth.views.login_complete', {"render_failure": editInfo}, name='openid-complete'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
-    url(r'^account/info/edit', 'user_manage.views.editInfo'),
+    url(r'^login/$', login, {'template_name': 'usermanage/login.html'}),
+    url(r'^logout/$', logout, {'next_page': '/'}),
+    url(r'^relog/$', logout_then_login),
+    url(r'^account/editpassword/$', password_change, {'template_name': 'usermanage/user_form_base.html', 'post_change_redirect': '/relog/'}),
     url(r'^lesson/add', 'stu_response.views.createLesson'),
     url(r'^lesson/delete/(?P<lesson_id>[0-9a-zA-Z]+)/$', 'stu_response.views.deleteLesson'),
     url(r'^lesson/edit/(?P<lesson_id>[0-9a-zA-Z]+)/$', 'stu_response.views.editLesson'),
@@ -32,8 +32,11 @@ urlpatterns = patterns('',
     url(r'^class/removeself/(?P<class_id>[0-9a-zA-Z]+)/$', 'stu_response.views.removeSelfFromClass'),
     url(r'^account/classes/$', 'stu_response.views.listClasses'),
     url(r'^class/edit/(?P<class_id>[0-9a-zA-Z]+)/$', 'stu_response.views.editClass'),
+    url(r'^student/register/$', 'user_manage.views.registerStudent'),
+    url(r'^teacher/register/$', 'user_manage.views.registerTeacher'),
     url(r'^home/$', 'stu_response.views.home'),
     url(r'^$', 'stu_response.views.home'),
+    url(r'^ajax/login/$', 'user_manage.views.ajaxLogin'),
     url(r'^ajax/setseen/(?P<r_id>\d+)/$', 'stu_response.views.toggleSeen'),
     url(r'^ajax/responses/(?P<lesson_id>[0-9a-zA-Z]+)/(?P<q_num>\d+)/$', 'stu_response.views.getResponses'),
     url(r'^ajax/responses/(?P<lesson_id>[0-9a-zA-Z]+)/$', 'stu_response.views.getResponses'),

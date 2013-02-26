@@ -8,7 +8,6 @@
     <script type="text/javascript">
         var to;
         $(document).ready(function(){
-            $(".messages").slideDown(250).delay(2500).slideUp(250);
             $("#userOptions").toggle(function(){
                 $("#userOptionsMenu").slideDown(300);
                 to=setTimeout("$('#userOptionsMenu').slideUp(300)", 3000);
@@ -26,19 +25,33 @@
             $("#content-container").click(function(){
                 $("#userOptionsMenu").slideUp(300);
             });
+            $("#login-form").submit(function(){
+                if($("#id_username").val().trim()==""){
+                    $("#loginbox-errors").html("").append("Please enter a username");
+                    return false;
+                }
+                if($("#id_password").val().trim()==""){
+                    $("#loginbox-errors").html("").append("Please enter a password");
+                    return false;
+                }
+                $.post("/ajax/login/", $(this).serialize(), function(response){
+                    if(response.success){
+                        window.location.reload();
+                    }else{
+                        $("#loginbox-errors").fadeIn(function(){
+                            $("#loginbox-errors").text(response.error_msg);
+                            $("#loginbox-errors").delay(1000).fadeOut(3000);
+                        });
+                    }
+                });
+                return false;
+            });
         });
         
     </script>
     {%block head%}{%endblock%}
 </head>
 <body>
-    {%if messages%}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="message {{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {%endif%}
     <div id="topbar">
         {%block topbar%}    
             <div id="nav">
@@ -47,24 +60,38 @@
                 <a href="/lesson/add/">Lesson Creation</a>
                 <a href="/account/classes/">Classes</a>
                 {%endif%}
+                {%if not user.is_authenticated%}
+                <a href="/student/register/">Register</a>
+                {%endif%}
             </div>
-            {%if user.is_authenticated%}
-                <div id="userOptions">
-                    Logged in as <strong>{{user.get_full_name}}</strong> <img class="midimg" src="/static/images/arrow_down.png"/>
-                </div>
-            {%else%}
-                <div id="loginbox">
-                    <a href="/login/">Login</a>
-                </div>
-            {%endif%}
+            <div id="userOptions">
+                {%if user.is_authenticated%}
+                Logged in as <strong>{{user.username}}</strong> <img class="midimg" src="/static/images/arrow_down.png"/>
+                {%else%}
+                <a>Login</a>
+                {%endif%}
+            </div>
             <div id="userOptionsMenu" class="triangle-isosceles top">
                 {%if user.is_authenticated%}
                 <ul>
                     <li><a href="/account/editpassword/">Change Password</a></li>
-                    <li><a href="/account/info/edit/">Edit Account Info</a></li>
                 </ul>
                 <div id="user-button-container">
                     <button onclick="window.location.href='/logout/'">Logout</button>
+                </div>
+                {%else%}
+                <div id="loginbox">
+                    <div id="loginbox-errors" class="error">
+                    </div>
+                    <form id="login-form">
+                        <p><label for="id_username">Username:</label> <input type="text" maxlength="30" name="username" id="id_username"></p>
+                        <p><label for="id_password">Password:</label> <input type="password" id="id_password" name="password"></p>
+                        <div id="user-button-container">
+                        <a id="register" href="/student/register/">Register</a>
+                            <input type="submit" value="Login"/>
+                            <!--<input type="button" onclick="window.location.href='/student/register/'" value="Register"/>-->                            
+                        </div>
+                   </form>
                 </div>
                 {%endif%}
             </div>
