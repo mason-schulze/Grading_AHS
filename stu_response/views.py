@@ -8,6 +8,7 @@ from django.utils import simplejson
 from django.forms.util import ErrorList, ErrorDict
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.template import RequestContext
+from django.contrib import messages
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -26,6 +27,7 @@ def createLesson(request):
                 x.text = q['q_text']
                 x.q_num = q['q_num']
                 x.save()
+        messages.add_message(request, messages.INFO, "Lesson Created.")
         return redirect('/')
     else:
         try:
@@ -66,6 +68,7 @@ def editLesson(request, lesson_id):
                 elif q == len(questions) - 1:
                     x.delete()
                     break
+        messages.add_message(request, messages.INFO, "Lesson Edited.")
         return redirect('/')
     return render_to_response("stu_response/lesson_form.html", {"questions": lesson.questions.all().order_by("q_num"), "lesson": lesson}, context_instance=RequestContext(request))
 
@@ -134,6 +137,7 @@ def viewLesson(request, lesson_id):
                 lesson.recorded_responses.add(response)
         if request.is_ajax():
             return HttpResponse(simplejson.dumps({"success": True}), mimetype='application/json')
+        messages.success(request, "Response successfully recorded.")
         return redirect('/')
     return render_to_response("stu_response/lesson_view.html", {"lesson": lesson, "questions": lesson.questions.all().order_by('q_num'), "responses": simplejson.dumps(responses)}, context_instance=RequestContext(request))
 
@@ -161,6 +165,7 @@ def createClass(request):
             new_class.save()
             for l in form.cleaned_data['lessons']:
                 new_class.lessons.add(l)
+            messages.success(request, "Class \"" + new_class.name + "\"created.")
             return redirect('/account/classes/')
     else:
         form = ClassForm(creator=request.user)
@@ -175,6 +180,7 @@ def editClass(request, class_id):
             form = ClassEditForm(data=request.POST, instance=c, creator=request.user)
             if form.is_valid():
                 form.save()
+                messages.success(request, "Class saved.")
                 return redirect('/account/classes/')
         else:
             form = ClassEditForm(instance=c, creator=request.user)
@@ -261,9 +267,9 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
                 "q_num": r.question.q_num,
                 "r_id": r.id,
             }
-            if classes != None and r.student in classes.students.all():
+            if classes is not None and r.student in classes.students.all():
                 response_set.append(curr)
-            elif classes == None:
+            elif classes is None:
                 response_set.append(curr)
     return HttpResponse(simplejson.dumps({"responses": response_set}), mimetype="application/json")
 
@@ -274,8 +280,8 @@ def getStudentsInLesson(request, lesson_id):
     if request.user != lesson.creator:
         return HttpResponseForbidden("You do not have access to this page.")
     users = {
-            "working": [],
-            "completed": [],
+        "working": [],
+        "completed": [],
     }
     temp = []
     for u in lesson.getStudentsCompleted():

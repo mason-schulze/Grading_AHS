@@ -8,6 +8,7 @@
     <script type="text/javascript">
         var to;
         $(document).ready(function(){
+            $(".messages").fadeIn(300).delay(2500).slideUp(300);
             $("#userOptions").toggle(function(){
                 $("#userOptionsMenu").slideDown(300);
                 to=setTimeout("$('#userOptionsMenu').slideUp(300)", 3000);
@@ -52,6 +53,13 @@
     {%block head%}{%endblock%}
 </head>
 <body>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <div id="topbar">
         {%block topbar%}    
             <div id="nav">
