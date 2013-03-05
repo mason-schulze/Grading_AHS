@@ -39,17 +39,12 @@ tr td{
     height:35px;
 }
 tr:hover{
-    background: #FFFFCD;
+    background: #FFFFCD !important;
 }
 .lesson:hover{
     color:blue;
-    background: #FFFFCD;
 }
-.lesson a:hover{
-    color:blue;
-    text-decoration: underline;
-}
-tr a:hover{
+.display a:hover{
     color:blue;
     text-decoration: underline;
 }
