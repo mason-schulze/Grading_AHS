@@ -23,8 +23,8 @@ thead th:last-child{
 th {
     font-size: 1.1em;
     padding:10px;
-    background: #454540;
-    background: linear-gradient(#7daa72, #426339);
+    background: #75BF63;
+    background: linear-gradient(#75BF63, #426339);
     color: #fff;
 }
 tbody tr:nth-child(even){

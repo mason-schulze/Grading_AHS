@@ -27,7 +27,7 @@ def createLesson(request):
                 x.text = q['q_text']
                 x.q_num = q['q_num']
                 x.save()
-        messages.add_message(request, messages.INFO, "Lesson Created.")
+        messages.add_message(request, messages.INFO, "Lesson \"" + lesson.name + "\" created.")
         return redirect('/')
     else:
         try:
@@ -68,7 +68,7 @@ def editLesson(request, lesson_id):
                 elif q == len(questions) - 1:
                     x.delete()
                     break
-        messages.add_message(request, messages.INFO, "Lesson Edited.")
+        messages.add_message(request, messages.INFO, "Lesson edited.")
         return redirect('/')
     return render_to_response("stu_response/lesson_form.html", {"questions": lesson.questions.all().order_by("q_num"), "lesson": lesson}, context_instance=RequestContext(request))
 
@@ -198,6 +198,7 @@ def deleteClass(request, class_id):
         if request.is_ajax():
             return HttpResponse(simplejson.dumps({"success": True}), mimetype="application/json")
         else:
+            messages.success(request, "Class deleted.")
             return redirect('/account/classes/')
     if request.is_ajax():
         return HttpResponseForbidden(simplejson.dumps({"success": False}), mimetype="application/json")
