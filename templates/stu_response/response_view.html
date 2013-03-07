@@ -172,7 +172,7 @@ function update(){
         }else{            
             for(x in data.responses){
                 r = data.responses[x];
-                $("#responses").append(responseTemplate);
+                $("#responses tbody").append(responseTemplate);
                 var curr = $(".response").last();
                 curr.children(".text").text(r.response);
                 curr.children(".date").text(r.edit_date);
@@ -234,10 +234,6 @@ th{
 td{
     text-align: center;
     vertical-align: top;
-}
-.response:nth-child(even) td {
-    background: #e8eae9;
-    background: linear-gradient(#f7faf9, #e8eae9);
 }
 #auto-refresh,#show-all{
     margin:0 5px;
@@ -328,16 +324,18 @@ h1{
                 <th>Response</th>
                 <th class="orderable" data-order="viewed">Seen <br/><a href='#' id='selAll'>All</a>|<a href='#' id='selNone'>None</a></th>
             </tr>  
-        </thead>      
-        {%for q in questions%}  
-            {%if not question%}
-            <tr>
-                <th class="q_heading" rel="{{q.q_num}}"  colspan="4">
-                    <span title="{{q.text}}">Question {{q.q_num}}</span> <a href="#" title="Click to show/hide" class="toggleq">show</a>
-                    <p class="q_text">{{q.text}}</p>
-                </th>
-            </tr>   
-            {%endif%}
-        {%endfor%}
+        </thead>  
+        <tbody>
+            {%for q in questions%}  
+                {%if not question%}
+                <tr>
+                    <th class="q_heading" rel="{{q.q_num}}"  colspan="4">
+                        <span title="{{q.text}}">Question {{q.q_num}}</span> <a href="#" title="Click to show/hide" class="toggleq">show</a>
+                        <p class="q_text">{{q.text}}</p>
+                    </th>
+                </tr>   
+                {%endif%}
+            {%endfor%}
+        </tbody>    
     </table>
 {%endblock%}

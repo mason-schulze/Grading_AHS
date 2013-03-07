@@ -38,8 +38,8 @@ tr a{
 tr td{
     height:35px;
 }
-tr:hover{
-    background: #FFFFCD !important;
+tbody tr:hover{
+    background:#FFFFCD !important;
 }
 .lesson:hover{
     color:blue;
