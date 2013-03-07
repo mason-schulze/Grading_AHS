@@ -89,7 +89,7 @@ class Lesson(models.Model):
                 reverse = False
                 if order.find("-") != -1:
                     reverse = True
-                responses = sorted(responses, key=lambda r: r.student.first_name.lower(), reverse=reverse)
+                responses = sorted(responses, key=lambda r: r.student.last_name.lower(), reverse=reverse)
             lesson_responses.append(responses)
         elif stu_id:
             student = User.objects.get(pk=stu_id)
