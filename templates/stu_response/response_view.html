@@ -25,6 +25,32 @@ $(document).ready(function(){
         $("#qSelect option[value="+currQ+"]").attr("selected","selected");
     }
 
+    $("#toggleComments").toggle(
+        function(){
+            $(".comment, #content-container").clearQueue();
+            $(".comment").animate({
+                'opacity': 'show',
+                'width': '150px',
+                'height': '50px',
+            }, 1000);
+            $("#content-container").animate({
+                'width':'1200px',
+            }, 1000, 'swing');
+            return false;
+        },
+        function(){
+            $(".comment, #content-container").clearQueue();
+            $(".comment").animate({
+                'width': '0px',
+                'height': '0px',
+                'opacity': 'hide',
+            }, 1000);
+            $("#content-container").animate({
+                'width':'800px',
+            }, 1000, 'swing');    
+            return false;    
+        });
+
     // Adds listeners for response table and topbar options
     addFilterListeners();
     addTableListeners();
@@ -90,7 +116,7 @@ function addFilterListeners(){
     );  
 }
 
-function addTableListeners(){
+function addTableListeners(){    
     $(".response input[type='checkbox']").unbind();
     $(".response input[type='checkbox']").change(function(){
         var curr = $($(this).next(".r_id"));
@@ -132,7 +158,14 @@ function addTableListeners(){
             order = temp;
         }
         update();
-    });  
+    });
+    $(".comment").unbind();
+    $(".comment").focus(function(){
+        $(this).parent("td").parent(".response").css("background", "#FFFFCD");
+    });
+    $(".comment").blur(function(){
+        $(this).parent("td").parent(".response").css("background", "inherit");
+    });
 }
 
 var responseTemplate = "\
@@ -141,8 +174,11 @@ var responseTemplate = "\
         <td class='date'></td>\
         <td class='text'></td>\
         <td class='seen'>\
-        <input type='checkbox'/>\
-        <input type='hidden' class='r_id'/>\
+            <input type='checkbox'/>\
+            <input type='hidden' class='r_id'/>\
+        </td>\
+        <td>\
+            <textarea class='comment'></textarea>\
         </td>\
     </tr>";
 
@@ -168,6 +204,7 @@ function update(){
                 if(r.viewed){
                     curr.children('.seen').children("[type='checkbox']").attr("checked","checked");
                 }
+                curr.children('.comment').attr('tabindex', x+1);
             }
         }else{            
             for(x in data.responses){
@@ -181,6 +218,7 @@ function update(){
                 if(r.viewed){
                     curr.children('.seen').children("[type='checkbox']").attr("checked","checked");
                 }
+                curr.find('.comment').attr('tabindex', x+1);
             }
         }
         $("#respondents span").text(data.responses.length);
@@ -277,6 +315,10 @@ h1{
 #respondents{
     float:right;
 }
+.comment{
+    display:none;
+    width:0;
+}
 </style>
 {%endblock%}
 
@@ -323,6 +365,7 @@ h1{
                 <th class="orderable" data-order="edit_date">Last Edit Date</th>
                 <th>Response</th>
                 <th class="orderable" data-order="viewed">Seen <br/><a href='#' id='selAll'>All</a>|<a href='#' id='selNone'>None</a></th>
+                <th><img id="toggleComments" height="30" src="/static/images/comments.png"/></th>
             </tr>  
         </thead>  
         <tbody>
