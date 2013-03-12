@@ -164,7 +164,7 @@ function addTableListeners(){
         $(this).parent("td").parent(".response").css("background", "#FFFFCD");
     });
     $(".comment").blur(function(){
-        $(this).parent("td").parent(".response").css("background", "inherit");
+        $(this).parent("td").parent(".response").css("background", "");
     });
 }
 
@@ -361,10 +361,10 @@ h1{
     <table id="responses">
         <thead>
             <tr id="headings">
-                <th class="orderable" data-order="student">Student</th>
-                <th class="orderable" data-order="edit_date">Last Edit Date</th>
+                <th class="orderable" data-order="student" title="Sort by student last name">Student</th>
+                <th class="orderable" data-order="edit_date" title="Sort by last edit date">Last Edit Date</th>
                 <th>Response</th>
-                <th class="orderable" data-order="viewed">Seen <br/><a href='#' id='selAll'>All</a>|<a href='#' id='selNone'>None</a></th>
+                <th class="orderable" data-order="viewed" title="Order by seen">Seen <br/><a title="Mark all as seen" href='#' id='selAll'>All</a>|<a href='#' title="Mark all as unseen" id='selNone'>None</a></th>
                 <th><img id="toggleComments" height="30" src="/static/images/comments.png"/></th>
             </tr>  
         </thead>  

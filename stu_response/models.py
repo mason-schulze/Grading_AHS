@@ -29,6 +29,7 @@ class Response(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     edit_date = models.DateTimeField()
     viewed = models.BooleanField(default=False)
+    comment = models.CharField(null=True, blank=True, max_length=3000)
 
     def __unicode__(self):
         return "(" + self.student.username + ") " + self.text
