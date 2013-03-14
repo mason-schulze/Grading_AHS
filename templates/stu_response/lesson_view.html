@@ -43,12 +43,13 @@ $(document).ready(function(){
             }
         });
         return false;
-    })
+    });
     function addResponses(arr){        
         if (arr.length!=0){
             questions = $(".question");
             for(var x = 0; x<questions.length; x++){
-                $(questions[x]).children('.response').text(arr[x].response)
+                $(questions[x]).children('.response').text(arr[x].response);
+                $(questions[x]).next(".comment").text(arr[x].comment);
             } 
         }
     }
@@ -59,8 +60,15 @@ $(document).ready(function(){
         width:auto;
     }
     #response_form{
-        width:350px;
+        width:450px;
         margin: 0 auto;
+    }
+    .question{
+        width:300px;
+    }
+    .comment{
+        color:gray;
+        font-size: .7em;
     }
     #response_form textarea{
         width:100%;
@@ -72,18 +80,29 @@ $(document).ready(function(){
     #topbar{
         min-width:400px;
     }
+    table{
+        width:100%;
+        border-spacing: 20px 5px;
+    }
 </style>
 {%endblock%}
 {%block content%}
 <h1>{{lesson.name}}</h1>
 <form id="response_form" method="post">
-    {%for x in questions%}
-        <div class="question">
-            <span class="qnum">{{x.q_num}}</span>. {{x.text}}<br/>
-            <input type="hidden" class="q_id" value="{{x.id}}"/>
-            <textarea class="response" rows="6"></textarea><br/>
-        </div>
-    {%endfor%}
+    <table>
+        {%for x in questions%}
+        <tr>
+            <td class="question">
+                <span class="qnum">{{x.q_num}}</span>. {{x.text}}<br/>
+                <input type="hidden" class="q_id" value="{{x.id}}"/>
+                <textarea class="response" rows="6"></textarea><br/>
+            </td>
+            <td class="comment">
+                {{x.comment}}
+            </td>
+        </tr>
+        {%endfor%}
+    </table>
     <input type="hidden" name="responses" id="responses"/>
     <br/>
     <input type="button" id="save" value="Save"/>

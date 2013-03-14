@@ -29,7 +29,7 @@ class Response(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     edit_date = models.DateTimeField()
     viewed = models.BooleanField(default=False)
-    comment = models.CharField(null=True, blank=True, max_length=3000)
+    comment = models.CharField(default="", blank=True, max_length=3000)
 
     def __unicode__(self):
         return "(" + self.student.username + ") " + self.text
@@ -138,7 +138,7 @@ class Lesson(models.Model):
             self.respondents.add(u)
 
     def save(self, *args, **kwargs):
-        if self.key == None or self.key == "":
+        if self.key is None or self.key == "":
             key = sha1(str(random.random())).hexdigest()
             while Lesson.objects.filter(key=key).count() > 0:
                 key = sha1(str(random.random())).hexdigest()
@@ -183,7 +183,7 @@ class Class(models.Model):
     uid = models.CharField(max_length=200, unique=True)
 
     def save(self, *args, **kwargs):
-        if self.uid == None or self.uid == "":
+        if self.uid is None or self.uid == "":
             key = hex(random.getrandbits(32)).rstrip("L").lstrip("0x")
             while Class.objects.filter(uid=key).count() > 0:
                 key = hex(random.getrandbits(32)).rstrip("L").lstrip("0x")

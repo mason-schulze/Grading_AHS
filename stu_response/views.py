@@ -104,10 +104,11 @@ def viewLesson(request, lesson_id):
                     else:
                         r = x
             curr = {
-                "user_id": r.student.__str__(),
+                "user_id": r.student.__unicode__(),
                 "response": r.text,
                 "last_edit": r.edit_date.__str__(),
                 "q_num": r.question.q_num.__str__(),
+                "comment": r.comment,
             }
             responses.append(curr)
     if request.method == "POST":
@@ -137,7 +138,7 @@ def viewLesson(request, lesson_id):
                 lesson.recorded_responses.add(response)
         if request.is_ajax():
             return HttpResponse(simplejson.dumps({"success": True}), mimetype='application/json')
-        messages.success(request, "Response successfully recorded.")
+        messages.success(request, "Responses successfully recorded.")
         return redirect('/')
     return render_to_response("stu_response/lesson_view.html", {"lesson": lesson, "questions": lesson.questions.all().order_by('q_num'), "responses": simplejson.dumps(responses)}, context_instance=RequestContext(request))
 
@@ -153,6 +154,16 @@ def viewResponses(request, lesson_id, q_num=None, stu_id=None):
     if q_num:
         curr_q = lesson.questions.get(q_num=q_num)
     return render_to_response("stu_response/response_view.html", {"questions": lesson_set, "classes": classes, "lesson_key": lesson_id, "question": curr_q, "lesson": lesson, "lesson_id": lesson.id, "users": lesson.getStudentsResponded()}, context_instance=RequestContext(request))
+
+
+@user_passes_test(lambda u: u.is_staff)
+def createComment(request, response_id):
+    response = get_object_or_404(Response, id=response_id)
+    if request.method == "POST" and request.POST.get("comment", False):
+        response.comment = request.POST.get("comment")
+        response.save()
+        return HttpResponse(simplejson.dumps({"success": True}), mimetype="application/json")
+    return HttpResponse(simplejson.dumps({"success": True}), mimetype="application/json")
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -267,6 +278,7 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
                 "student": r.student.get_full_name(),
                 "q_num": r.question.q_num,
                 "r_id": r.id,
+                "comment": r.comment,
             }
             if classes is not None and r.student in classes.students.all():
                 response_set.append(curr)
