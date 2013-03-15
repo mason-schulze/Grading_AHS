@@ -32,10 +32,10 @@ $(document).ready(function(){
                 'opacity': 'show',
                 'width': '150px',
                 'height': '50px',
-            }, 1000);
+            }, 300);
             $("#content-container").animate({
                 'width':'1200px',
-            }, 1000, 'swing');
+            }, 300, 'swing');
             return false;
         },
         function(){
@@ -44,10 +44,10 @@ $(document).ready(function(){
                 'width': '0px',
                 'height': '0px',
                 'opacity': 'hide',
-            }, 1000);
+            }, 300);
             $("#content-container").animate({
                 'width':'800px',
-            }, 1000, 'swing');    
+            }, 300, 'swing');    
             return false;    
         });
 
@@ -246,7 +246,7 @@ function update(){
     width:180px;
 }
 .seen{
-    width:20px;
+    width:25px;
     text-align: center;
 }
 .q_heading{
@@ -305,6 +305,10 @@ p strong{
 #selAll,#selNone{
     color:lightblue;
     font-size: .7em;
+    margin-left:5px;
+}
+#selAll:hover,#selNone:hover{
+    color:white;
 }
 #selAll:active,#selNone:active{
     color:pink;
@@ -325,6 +329,9 @@ h1{
 .comment{
     display:none;
     width:0;
+}
+.text{
+    text-align: left;
 }
 </style>
 {%endblock%}
@@ -371,7 +378,7 @@ h1{
                 <th class="orderable" data-order="student" title="Sort by student last name">Student</th>
                 <th class="orderable" data-order="edit_date" title="Sort by last edit date">Last Edit Date</th>
                 <th>Response</th>
-                <th class="orderable" data-order="viewed" title="Order by seen">Seen <br/><a title="Mark all as seen" href='#' id='selAll'>All</a>|<a href='#' title="Mark all as unseen" id='selNone'>None</a></th>
+                <th class="orderable" data-order="viewed" title="Order by seen">Seen <br/><a title="Mark all as seen" href='#' id='selAll'>All</a><a href='#' title="Mark all as unseen" id='selNone'>None</a></th>
                 <th><img id="toggleComments" height="30" src="/static/images/comments.png"/></th>
             </tr>  
         </thead>  

@@ -30,11 +30,17 @@ class Response(models.Model):
     edit_date = models.DateTimeField()
     viewed = models.BooleanField(default=False)
     comment = models.CharField(default="", blank=True, max_length=3000)
+    uid = models.CharField(null=True, blank=True, unique=True, max_length=200)
 
     def __unicode__(self):
         return "(" + self.student.username + ") " + self.text
 
     def save(self, set_date=None, *args, **kwargs):
+        if self.uid is None or self.uid == "":
+            uid = sha1(str(random.random())).hexdigest()
+            while Response.objects.filter(uid=uid).count() > 0:
+                uid = sha1(str(random.random())).hexdigest()
+            self.uid = uid
         if set_date:
             self.edit_date = datetime.datetime.utcnow().replace(tzinfo=utc)
         super(Response, self).save(*args, **kwargs)
@@ -66,14 +72,14 @@ class Lesson(models.Model):
         return self.name
 
     def getStudentsResponded(self):
-        respondents = self.respondents.all()
+        respondents = sorted(self.respondents.all(), key=lambda r: r.last_name.lower())
         users = []
         for r in respondents:
             users.append(r)
         return users
 
     def getStudentsCompleted(self):
-        students = self.respondents.all()
+        students = sorted(self.respondents.all(), key=lambda r: r.last_name.lower())
         studentsDone = []
         for s in students:
             numDone = self.getNumCompleted(s.id)

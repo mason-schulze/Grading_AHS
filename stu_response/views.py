@@ -158,7 +158,7 @@ def viewResponses(request, lesson_id, q_num=None, stu_id=None):
 
 @user_passes_test(lambda u: u.is_staff)
 def createComment(request, response_id):
-    response = get_object_or_404(Response, id=response_id)
+    response = get_object_or_404(Response, uid=response_id)
     if request.method == "POST" and request.POST.get("comment", False):
         response.comment = request.POST.get("comment")
         response.save()
@@ -277,7 +277,7 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
                 "viewed": r.viewed,
                 "student": r.student.get_full_name(),
                 "q_num": r.question.q_num,
-                "r_id": r.id,
+                "r_id": r.uid,
                 "comment": r.comment,
             }
             if classes is not None and r.student in classes.students.all():
@@ -319,7 +319,7 @@ def getStudentsInLesson(request, lesson_id):
 @user_passes_test(lambda u: u.is_staff)
 def toggleSeen(request, r_id):
     if request.is_ajax() and request.GET.get('seen', False) and request.user.is_staff:
-        r = Response.objects.get(pk=r_id)
+        r = Response.objects.get(uid=r_id)
         if request.user != r.getLesson().creator:
             return HttpResponseForbidden("You do not have access to this page.")
         r.viewed = True if request.GET['seen'] == '1' else False
