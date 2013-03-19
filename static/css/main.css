@@ -24,6 +24,7 @@ div,a,p, td{
 }
 .messages{
     position:fixed;
+    border: 2px solid gray;
     top:0;
     left:0;
     right:0;

@@ -22,6 +22,18 @@ $(document).ready(function(){
     $("#lesson_form").submit(function(){
         questions = [];
         var data = $(".question");
+        if($("[name='lesson_name']").val().trim()==""){
+            $(".errorlist").append("<li>Please enter a valid lesson name</li>");
+            $("[name='lesson_name']").focus();
+            setTimeout("clearErrors()", 1500);
+            return false;
+        }
+        if(data.length == 0){
+            $(".errorlist").append("<li>You must add a question first</li>");
+            $("#addQ").focus();
+            setTimeout("clearErrors()", 1500);
+            return false;
+        }
         for(var x = 0; x<data.length; x++){
             var id = $(data[x]).children('.q_id').val();
             var text = $($(data[x]).children('.q_text')).val();
@@ -30,6 +42,11 @@ $(document).ready(function(){
         $("#questions").val(JSON.stringify(questions));
     });
 });
+function clearErrors(){
+    $('.errorlist li').slideUp(500, function(){
+        $(this).remove();
+    });
+}
 function renumber(){
     var data = $(".question");
     var tab = 0;
@@ -128,6 +145,8 @@ function addListeners(){
 {%else%}
     <h1>Create Lesson</h1>
 {%endif%}
+<ul class="errorlist error">
+</ul>
 <form id="lesson_form" method="post">
     {%if lesson%}        
         <h3>Lesson Name: <input type="text" name="lesson_name" tabindex="1" value="{{lesson.name}}"/></h3>

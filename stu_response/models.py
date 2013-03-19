@@ -89,7 +89,7 @@ class Lesson(models.Model):
 
     def getResponses(self, q_num=None, stu_id=None, order="-edit_date"):
         lesson_responses = []
-        if q_num:
+        if q_num and self.questions.count() > 0:
             question = self.questions.get(q_num=q_num)
             responses = Response.objects.filter(question=question).exclude(text="").order_by(order)
             if order.find("student") != -1:
