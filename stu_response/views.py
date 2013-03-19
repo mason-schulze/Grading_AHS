@@ -9,6 +9,7 @@ from django.forms.util import ErrorList, ErrorDict
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.template import RequestContext
 from django.contrib import messages
+from django.utils.safestring import mark_safe
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -80,6 +81,7 @@ def deleteLesson(request, lesson_id):
         lesson.recorded_responses.all().delete()
         lesson.questions.all().delete()
         lesson.delete()
+        messages.success(request, "Lesson successfully deleted.")
         return HttpResponse(simplejson.dumps({"success": True}), mimetype="application/json")
     else:
         return HttpResponseForbidden(simplejson.dumps({"success": False}), mimetype="application/json")
@@ -154,7 +156,7 @@ def viewResponses(request, lesson_id, q_num=None, stu_id=None):
     if q_num and lesson.questions.count() > 0:
         curr_q = lesson.questions.get(q_num=q_num)
     elif lesson.questions.count() == 0:
-        messages.error(request, "You need to add questions to this lesson before you get responses! <a href='" + lesson.get_edit_url() + "'>Edit Lesson</a>")
+        messages.error(request, mark_safe("You need to add questions to this lesson before you get responses! <a href='" + lesson.get_edit_url() + "'>Edit Lesson</a>"))
     return render_to_response("stu_response/response_view.html", {"questions": lesson_set, "classes": classes, "lesson_key": lesson_id, "question": curr_q, "lesson": lesson, "lesson_id": lesson.id, "users": lesson.getStudentsResponded()}, context_instance=RequestContext(request))
 
 
