@@ -8,12 +8,7 @@
     <script type="text/javascript">
         var to;
         $(document).ready(function(){
-            $(".messages").fadeIn(300).delay(2500).slideUp(300);
-            $(".messages").hover(function(){
-                $(this).clearQueue();
-            }, function(){                
-                $(this).delay(2500).slideUp(300);
-            });
+            flashMessages();
             $("#userOptions").toggle(function(){
                 $("#userOptionsMenu").slideDown(300);
                 to=setTimeout("$('#userOptionsMenu').slideUp(300)", 3000);
@@ -53,7 +48,14 @@
                 return false;
             });
         });
-        
+        function flashMessages(){
+            $(".messages").fadeIn(300).delay(2500).slideUp(300);
+            $(".messages").hover(function(){
+                $(this).clearQueue();
+            }, function(){                
+                $(this).delay(2500).slideUp(300);
+            });
+        }
     </script>
     {%block head%}{%endblock%}
 </head>

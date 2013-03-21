@@ -168,6 +168,19 @@ function addTableListeners(){
         var id = $(this).parent("td").parent('.response').find('.r_id').val();
         $.post("/comment/"+id+"/", {"comment": $(this).val()}, function(data){
             if(data.success){
+                $(".messages").clearQueue().hide();
+                $(".messages").html("<li>Comment successfully recorded</li>");
+                flashMessages();
+            }else{
+                switch(data.errorCode){
+                    case 0:
+                        break;
+                    case 1:
+                        $(".messages").clearQueue().hide();
+                        $(".messages").html("<li class='error'>Comment unsuccessfully recorded</li>");
+                        flashMessages();
+                        break;
+                }
             }
         });
     });
@@ -333,10 +346,15 @@ h1{
 .text{
     text-align: left;
 }
+#toggleComments:hover{
+    cursor: pointer;
+}
 </style>
 {%endblock%}
 
 {%block content%}
+    <ul class="messages">
+    </ul>
     <div id="filter-options">  
         <img class="loader" src="/static/images/loader.gif"/>  
         <strong>Filter Options:</strong> 
@@ -379,7 +397,7 @@ h1{
                 <th class="orderable" data-order="edit_date" title="Sort by last edit date">Last Edit Date</th>
                 <th>Response</th>
                 <th class="orderable" data-order="viewed" title="Order by seen">Seen <br/><a title="Mark all as seen" href='#' id='selAll'>All</a><a href='#' title="Mark all as unseen" id='selNone'>None</a></th>
-                <th><img id="toggleComments" height="30" src="/static/images/comments.png"/></th>
+                <th><img id="toggleComments" title="Toggle comments" height="30" src="/static/images/comments.png"/></th>
             </tr>  
         </thead>  
         <tbody>
