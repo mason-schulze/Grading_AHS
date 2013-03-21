@@ -152,6 +152,13 @@ class Lesson(models.Model):
         super(Lesson, self).save(*args, **kwargs)
 
 
+def responsesAllViewed(user, lesson):
+    for response in lesson.recorded_responses.filter(student=user):
+        if not response.is_blank() and not response.viewed:
+            return False
+    return True
+
+
 def fixResponses():
     for l in Lesson.objects.all():
         l.addPrevResponses()

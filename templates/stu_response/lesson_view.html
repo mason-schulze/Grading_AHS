@@ -67,11 +67,11 @@ $(document).ready(function(){
         width:300px;
     }
     .comment{
-        color:gray;
+        color:blue;
         font-size: .7em;
     }
     #response_form textarea{
-        width:100%;
+        width:98%;
         resize:vertical;
     }
     h1{
@@ -84,12 +84,20 @@ $(document).ready(function(){
         width:100%;
         border-spacing: 20px 5px;
     }
+    thead th{
+        font-size: 1.2em;
+    }
 </style>
 {%endblock%}
 {%block content%}
-<h1>{{lesson.name}}</h1>
 <form id="response_form" method="post">
     <table>
+        <thead>
+            <tr>
+                <th>{{lesson.name}}</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
         {%for x in questions%}
         <tr>
             <td class="question">

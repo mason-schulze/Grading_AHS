@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete, ClassForm, ClassEditForm, Class, ClassRegistrationForm
+from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete, ClassForm, ClassEditForm, Class, ClassRegistrationForm, responsesAllViewed
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseForbidden
@@ -303,6 +303,7 @@ def getStudentsInLesson(request, lesson_id):
         return HttpResponseForbidden("You do not have access to this page.")
     users = {
         "working": [],
+        "seen": [],
         "completed": [],
     }
     temp = []
@@ -321,7 +322,10 @@ def getStudentsInLesson(request, lesson_id):
                 "last": u.last_name,
                 "username": u.username,
             }
-            users["working"].append(curr)
+            if responsesAllViewed(user=u, lesson=lesson):
+                users["seen"].append(curr)
+            else:
+                users["working"].append(curr)
     return HttpResponse(simplejson.dumps(users), mimetype='application/json')
 
 

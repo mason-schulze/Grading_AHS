@@ -24,12 +24,18 @@ th {
     font-size: 1.1em;
     padding:10px;
     background: #75BF63;
-    background: linear-gradient(#75BF63, #426339);
+    background: -moz-linear-gradient(#75BF63, #426339);
+    background: -webkit-linear-gradient(#75BF63, #426339);
+    background: -o-linear-gradient(#75BF63, #426339);
+    background: -ms-linear-gradient(#75BF63, #426339);
     color: #fff;
 }
 tbody tr:nth-child(even){
     background: #e8eae9;
-    background: linear-gradient(#f7faf9, #e8eae9);
+    background: -moz-linear-gradient(#f7faf9, #e8eae9);
+    background: -webkit-linear-gradient(#f7faf9, #e8eae9);
+    background: -o-linear-gradient(#f7faf9, #e8eae9);
+    background: -ms-linear-gradient(#f7faf9, #e8eae9);
 }
 tr a{
     color:black;
