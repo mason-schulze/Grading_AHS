@@ -27,7 +27,7 @@ class Response(models.Model):
     student = models.ForeignKey(User)
     text = models.CharField(max_length=3000)
     creation_date = models.DateTimeField(auto_now_add=True)
-    edit_date = models.DateTimeField()
+    edit_date = models.DateTimeField(null=True)
     viewed = models.BooleanField(default=False)
     comment = models.CharField(default="", blank=True, max_length=3000)
     uid = models.CharField(null=True, blank=True, unique=True, max_length=200)

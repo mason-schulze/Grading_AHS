@@ -97,7 +97,7 @@ def viewLesson(request, lesson_id):
                 r = Response.objects.get(question=q, student=User.objects.get(pk=request.user.id))
             except ObjectDoesNotExist:
                 r = Response(student=User.objects.get(pk=request.user.id), text="", question=q)
-                r.save()
+                r.save(set_date=True)
             except MultipleObjectsReturned:
                 temp = Response.objects.filter(question=q, student=User.objects.get(pk=request.user.id)).order_by("edit_date")
                 for x in temp:
