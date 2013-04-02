@@ -63,11 +63,25 @@ function addListeners(){
     $(".delete").unbind();
     $(".up").unbind();
     $(".down").unbind();
-    $("input, textarea").unbind();
+    $("input, textarea, body").unbind();
     $(".q_text").unbind();
     $(".q_text").bind('keydown', 'ctrl+d', function(e){
         e.preventDefault();
         $(this).next(".question-options").find(".delete").click();
+        return false;
+    });
+    $(".q_text").bind('keydown', 'ctrl+shift+up', function(e){
+        e.preventDefault();
+        $(this).next(".question-options").find(".up").click();
+        $(this).focus();
+        console.log(this);
+        return false;
+    });
+    $(".q_text").bind('keydown', 'ctrl+shift+down', function(e){
+        e.preventDefault();
+        $(this).next(".question-options").find(".down").click();
+        
+        console.log(this);
         return false;
     });
     $("input, textarea, body").bind('keydown', 'ctrl+s', function(e){
@@ -94,9 +108,12 @@ function addListeners(){
         }
         prev.fadeOut();
         curr.fadeOut(function(){            
-            $(curr).insertBefore(prev).fadeIn();
+            $(curr).insertBefore(prev).fadeIn(function(){
+                curr.find(".q_text").focus();
+            });
             prev.fadeIn();
             renumber();
+            curr.focus();
         });           
         return false;
     });
@@ -108,7 +125,9 @@ function addListeners(){
         }
         next.fadeOut();
         curr.fadeOut(function(){            
-            $(curr).insertAfter(next).fadeIn();
+            $(curr).insertAfter(next).fadeIn(function(){
+                curr.find(".q_text").focus();
+            });
             next.fadeIn();
             renumber();
         });           
