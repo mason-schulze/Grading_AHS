@@ -69,7 +69,7 @@ def editLesson(request, lesson_id):
                 elif q == len(questions) - 1:
                     x.delete()
                     break
-        messages.add_message(request, messages.INFO, "Lesson edited.")
+        messages.add_message(request, messages.INFO, lesson.name + " saved.")
         return redirect('/')
     return render_to_response("stu_response/lesson_form.html", {"questions": lesson.questions.all().order_by("q_num"), "lesson": lesson}, context_instance=RequestContext(request))
 

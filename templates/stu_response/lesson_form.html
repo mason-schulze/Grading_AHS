@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 
 {%block head%}
-<script src="/static/js/jquery.js"></script>
+<script src="/static/js/jquery.hotkeys.js"></script>
 <script>
 var template = "<div class='question'><span class='qnum'></span>.<br/><textarea class='q_text' rows='5' cols=40'></textarea><div class='question-options'><button class='up'>Move Up</button><button class='down'>Move Down</button><button class='delete'>Delete</button></div><input type='hidden' class='q_id' value=''/></div>"
 $(document).ready(function(){
     $("[name='lesson_name']").focus();
     addListeners();
-    renumber();
+    renumber();    
     $("#addQ").click(function(){
         $("#question-container").append(template);
+        $(".q_text").last().focus();
         $("html,body").stop(true);
         $("html,body").animate({
             scrollTop:$(document).height()
@@ -62,7 +63,25 @@ function addListeners(){
     $(".delete").unbind();
     $(".up").unbind();
     $(".down").unbind();
+    $("input, textarea").unbind();
+    $(".q_text").unbind();
+    $(".q_text").bind('keydown', 'ctrl+d', function(e){
+        e.preventDefault();
+        $(this).next(".question-options").find(".delete").click();
+        return false;
+    });
+    $("input, textarea, body").bind('keydown', 'ctrl+s', function(e){
+        e.preventDefault();
+        $("#lesson_form").submit();
+        return false;
+    });
+    $("input, textarea, body").bind('keydown', 'ctrl+q', function(e){
+        e.preventDefault();
+        $("#addQ").click();
+        return false;
+    });
     $(".delete").click(function(){
+        $(this).parent().parent(".question").prev(".question").find(".q_text").focus();
         $($(this).parent().parent(".question")).remove();
         renumber();
         return false;
