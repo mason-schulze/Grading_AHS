@@ -1,4 +1,3 @@
-# Create your views here.
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from stu_response.models import Lesson, Question, Response, getRespondedLessons, getPercentComplete, ClassForm, ClassEditForm, Class, ClassRegistrationForm, responsesAllViewed
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -347,23 +346,14 @@ def home(request):
         if request.user.is_staff:
             lesson_set = Lesson.objects.filter(creator=request.user).order_by('-creation_date')
             for x in lesson_set:
-                # getting responded users is slow
-                # students = x.getStudentsResponded()
-                # students_complete = x.getStudentsCompleted()
                 curr = {
                     "lesson": x,
                     "creator": x.creator,
-                    # "num_users": len(students),
-                    # "num_complete": len(students_complete),
-                    # "students": students,
-                    # "students_complete": students_complete,
                 }
                 lessons.append(curr)
             return render_to_response("staff_home.html", {"lessons": lessons}, context_instance=RequestContext(request))
         else:
-            # New Approach: Sorts student's view by percent completed
             lesson_set = sorted(getRespondedLessons(request.user), key=lambda l: getPercentComplete(user=request.user, lesson=l))
-            # lesson_set = getRespondedLessons(request.user)
             for l in lesson_set:
                 curr = {
                     "lesson": l,

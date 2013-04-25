@@ -25,6 +25,15 @@ $(document).ready(function(){
         $("#qSelect option[value="+currQ+"]").attr("selected","selected");
     }
 
+    $("#classSelect").change(function(){
+        var selected = $(this).val();
+        if(selected==0){
+            $("#stuSelect option").show();
+        }else{   
+            $("#stuSelect option[data-class*='"+selected+",'").hide();
+        }
+    });
+
     $("#toggleComments").toggle(
         function(){
             $(".comment, #content-container").clearQueue();
@@ -368,7 +377,7 @@ h1{
         Student <select id="stuSelect">
             <option value="0">---</option>
             {%for u in users%}
-                <option value="{{u.id}}">{{u.get_full_name}}</option>
+                <option data-class="{%for x in u.class_set.all%}{{x.uid}},{%endfor%}" value="{{u.id}}">{{u.get_full_name}}</option>
             {%endfor%}
         </select>
         Question Number <select id="qSelect">

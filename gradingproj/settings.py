@@ -127,6 +127,39 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'stu_response',
     'user_manage',
+    'social_auth',
+)
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_ERROR_URL = '/login-error/'
+
+AUTHENTICATION_BACKENDS = (
+    # 'social_auth.backends.google.GoogleOAuthBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    # 'social_auth.backends.google.GoogleBackend',
+    # 'social_auth.backends.contrib.github.GithubBackend',
+    # 'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+GOOGLE_OAUTH2_CLIENT_ID = '12361495098.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET = '67chjJNn6dfq8G07PR7rOPfg'
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'social_auth.context_processors.social_auth_by_name_backends',
+    'social_auth.context_processors.social_auth_backends',
+    # 'social_auth.context_processors.social_auth_by_type_backends',
+    # 'social_auth.context_processors.social_auth_login_redirect',
+)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_auth.backends.pipeline.social.social_auth_user',
+    'social_auth.backends.pipeline.associate.associate_by_email',
+    'social_auth.backends.pipeline.user.get_username',
+    'social_auth.backends.pipeline.user.create_user',
+    'social_auth.backends.pipeline.social.associate_user',
+    'social_auth.backends.pipeline.social.load_extra_data',
+    # 'social_auth.backends.pipeline.user.update_user_details'
 )
 
 # A sample logging configuration. The only tangible logging
