@@ -15,4 +15,4 @@ def editInfo(request, msg=""):
             return redirect("/home/")
     else:
         form = InfoEditForm(instance=request.user)
-    return render_to_response("usermanage/edit_info.html", {"form": form}, context_instance=RequestContext(request))
+    return render_to_response("usermanage/edit_info.html", {"form": form, "new_user": request.GET.get("nu", False)}, context_instance=RequestContext(request))
