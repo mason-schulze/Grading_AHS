@@ -54,9 +54,6 @@
                 <a href="/lesson/add/">Lesson Creation</a>
                 <a href="/account/classes/">Classes</a>
                 {%endif%}
-                {%if not user.is_authenticated%}
-                <a href="/student/register/">Register</a>
-                {%endif%}
             </div>
             {%if user.is_authenticated%}
                 <div id="userOptions">
@@ -64,7 +61,7 @@
                 </div>
             {%else%}
                 <div id="loginbutton">
-                    <a href="{% url 'socialauth_begin' 'google-oauth2' %}">Login</a>
+                    <a href="{% url 'socialauth_begin' 'google-oauth2' %}">Google Login</a>
                 </div>
             {%endif%}
             <div id="userOptionsMenu" class="triangle-isosceles top">
