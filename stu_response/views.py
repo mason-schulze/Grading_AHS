@@ -165,7 +165,7 @@ def createComment(request, response_id):
     # 0 - Same comment already exists
     # 1 - All other errors
     response = get_object_or_404(Response, uid=response_id)
-    if request.method == "POST" and request.POST.get("comment", False):
+    if request.method == "POST" and request.POST.get("comment", False) or request.POST.get("comment") == "":
         if response.comment == request.POST.get("comment"):
             return HttpResponse(simplejson.dumps({"success": False, "errorCode": 0}), mimetype="application/json")
         response.comment = request.POST.get("comment")

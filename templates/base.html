@@ -28,12 +28,19 @@
             });
         });
         function flashMessages(){
-            $(".messages").fadeIn(300).delay(2500).slideUp(300);
-            $(".messages").hover(function(){
-                $(this).clearQueue();
-            }, function(){                
-                $(this).delay(2500).slideUp(300);
-            });
+            if($(".messages").children("li").length > 0){
+                $(".messages").fadeIn(300).delay(2500).slideUp(300);
+                $(".messages").hover(function(){
+                    $(this).clearQueue();
+                }, function(){                
+                    $(this).delay(2500).slideUp(300);
+                });
+            }
+        }
+        function flashMessage(msg){
+            $(".messages").html("");
+            $(".messages").append("<li>" + msg + "</li>");
+            flashMessages();
         }
     </script>
     {%block head%}{%endblock%}
