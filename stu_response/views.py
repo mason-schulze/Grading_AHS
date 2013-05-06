@@ -340,9 +340,18 @@ def toggleSeen(request, r_id):
     return HttpResponseForbidden("You do not have the correct permissions to view this page")
 
 
-def home(request):
+def home(request, responses=False):
     lessons = []
     if request.user.is_authenticated():
+        if responses:
+            lesson_set = sorted(getRespondedLessons(request.user), key=lambda l: getPercentComplete(user=request.user, lesson=l))
+            for l in lesson_set:
+                curr = {
+                    "lesson": l,
+                    "completed": l.getNumCompleted(user_id=request.user.id),
+                }
+                lessons.append(curr)
+            return render_to_response("user_home.html", {"lessons": lessons}, context_instance=RequestContext(request))
         if request.user.is_staff:
             lesson_set = Lesson.objects.filter(creator=request.user).order_by('-creation_date')
             for x in lesson_set:

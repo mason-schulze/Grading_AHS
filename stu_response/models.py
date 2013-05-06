@@ -194,6 +194,10 @@ class Class(models.Model):
     password = models.CharField(max_length=50, help_text='A password required to the class.')
     lessons = models.ManyToManyField(Lesson, blank=True, help_text="Select lessons to be seen by this class.")
     uid = models.CharField(max_length=200, unique=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Classes"
 
     def save(self, *args, **kwargs):
         if self.uid is None or self.uid == "":

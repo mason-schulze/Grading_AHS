@@ -1,4 +1,4 @@
-from stu_response.models import Lesson, Response, Question
+from stu_response.models import Lesson, Response, Question, Class
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
@@ -57,3 +57,11 @@ class QuestionAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Question, QuestionAdmin)
+
+
+class ClassAdmin(admin.ModelAdmin):
+    list_display = ("name", get_full_name_display, "description")
+    readonly_fields = ("uid", "creator")
+    search_fields = ['name', 'creator__username', 'creator__first_name', 'creator__first_name', 'description']
+
+admin.site.register(Class, ClassAdmin)
