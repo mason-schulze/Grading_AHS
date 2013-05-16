@@ -63,6 +63,7 @@ admin.site.register(Question, QuestionAdmin)
 
 
 class ClassAdmin(admin.ModelAdmin):
+    filter_horizontal = ("students", "teachers", "lessons")
     list_display = ("name", get_full_name_display, "description")
     readonly_fields = ("uid", "creator")
     search_fields = ['name', 'creator__username', 'creator__first_name', 'creator__first_name', 'description']
