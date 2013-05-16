@@ -53,8 +53,11 @@ admin.site.register(Response, ResponseAdmin)
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    # need to show the parent Lesson and student responses
-    pass
+
+    def get_parent_lesson(self, instance):
+        return instance.lesson_set.all()[0]
+    get_parent_lesson.short_description = "Parent Lesson"
+    list_display = ("text", "get_parent_lesson", "q_num")
 
 admin.site.register(Question, QuestionAdmin)
 
