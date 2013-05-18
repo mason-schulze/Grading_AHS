@@ -1,37 +1,75 @@
-{%extends "form_base.html"%}
+{%extends "base.html"%}
 {%block head%}
+    <link rel="stylesheet" type="text/css" href="/static/css/zocial.css">
     <style type="text/css">
-        td{
-            padding:5px;
+        form{
+            display:inline-block;
+            width:250px;
+            padding:1em;
+            border-right:1px solid gray;
+            text-align: left;
+        }
+        #other_services{
+            padding:1em;
+            display:inline-block;
+            width:250px;
+            height:250px;
+            vertical-align: top;
+            text-align: left;
+        }
+        form h3, #other_services h3{
+            margin:0;
+            margin-bottom: .5em;
+            border-bottom: 1px solid #DDDDDD;
+        }
+        table{
+            margin:10px 0;
+        }
+        input[type=text], input[type=password]{
+            border: 1px solid #D2D2D2;
+            box-shadow: 0 0 2px #DDDDDD inset;
+            padding: 5px;
+            width:230px;
+            margin: 5px 0px;
+        }
+        input[type=text]:focus, input[type=password]:focus{
+            border-color:orange;
+        }
+        input[type=submit]{
+            font-weight: bold;
+            margin:5px 0;
+        }
+        .error{
+            font-size: 0.8em;
+        }
+        #content-container{
+            text-align: center;
         }
     </style>
 {%endblock%}
 
 {%block title%}Login{%endblock%}
 
-{%block form%}
+{%block content%}
     {%if user.is_authenticated and next%}
         <strong>Note:</strong> Access Denied. Please login to an authorized account to view this page. Otherwise <a href='/'>return home</a>.
-    {%elif user.is_authenticated%}
-        <strong>Note:</strong> You are already logged as <strong>{{user.username}}</strong>. If you would like to logout securely and sign into a different account, <a href="/logout/?next=/login/">go here</a>. Or, just login below.
-    {%elif next%}
-        <strong class="error">Note:</strong> You must be logged on to view this page. Please login or <a href="/student/register/?next={{next}}">register</a>.
-        <h1>Login</h1>
-    {%else%}
-        <h1>Login</h1>
     {%endif%}
     <form method="post" action="{{action}}">
-       {% csrf_token %}
-       <table>
-           {%for field in form%}
-                <tr>
-                    <td>{{field.label}}</td>
-                    <td>{{field}}</td>
-                    <td class="error">{{field.errors}}</td>
-                </tr>
-           {%endfor%}
-       </table>
-       <input type="submit" value="Login"/>
-       <input type="hidden" value="{{next}}"/>
+        <h3>Login with your account</h3>
+        {% if form.errors %}
+            <p class='error'>Your username and password didn't match.</p>
+        {% endif %}
+        {% csrf_token %}
+        <div class="form-container">
+            {%for field in form%}
+                <input type='{{field.field.widget.input_type}}' name="{{field.html_name}}" placeholder='{{field.label}}' value='{% if field.value %}{{field.value}}{%endif%}'/> <br/>
+            {%endfor%}
+        </div>
+        <input type="submit" value="Login"/>
+        <input type="hidden" value="{{next}}"/>
     </form>
+    <div id="other_services">
+        <h3>Other services</h3>
+        <a href="{% url 'socialauth_begin' 'google-oauth2' %}" class='zocial googleplus'>Google Login</a>
+    </div>
 {%endblock%}

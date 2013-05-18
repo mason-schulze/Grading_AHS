@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'', include('social_auth.urls')),
+    url(r'^login/$', 'django.contrib.auth.views.login', {"template_name": "usermanage/login.html"}),
+    url(r'^register/$', 'user_manage.views.registerUser'),
     url(r'^logout/$', logout, {'next_page': '/'}),
     url(r'^relog/$', logout_then_login),
     url(r'^$', 'stu_response.views.home'),

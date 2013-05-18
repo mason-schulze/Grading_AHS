@@ -5,7 +5,7 @@
             text-align: left;
         }
         #content-container{
-            width:400px;
+            width:500px;
         }
         form{
             margin-left:50px;
@@ -16,6 +16,12 @@
         input[type=submit]{
             float:right;
         }
+        .error_list{
+            font-size: 0.8em;
+            list-style: none;
+            margin:0;
+            padding: 0;
+        }
     </style>
 {% endblock head %}
 
@@ -23,19 +29,28 @@
     {% if new_user %}
         <h1>Registration</h1>
     {% else %}
-        <h1>Edit Account Information</h1>        
+        <h1>Edit Account Information</h1>
     {% endif %}
     <form method="post" action="/account/info/edit/">
         <table>
             <tr>
                 <th>Email:</th>
                 <td>{{user.email}}</td>
+                <td></td>
             </tr>
-            <tr>
-                <th>Username:</th>
-                <td>{{user.username}}</td>
-            </tr>
-            {{form.as_table}}
+            {%for field in form%}
+                <tr>
+                    <td>{{field.label}}</td>
+                    <td>{{field}}</td>
+                    <td>
+                        <ul class="error error_list">
+                            {% for error in field.errors %}
+                                <li>{{error}}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {%endfor%}
         </table>
         <input type="submit" value="Submit"/>
     </form>

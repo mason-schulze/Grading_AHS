@@ -68,7 +68,7 @@
                 </div>
             {%else%}
                 <div id="loginbutton">
-                    <a href="{% url 'socialauth_begin' 'google-oauth2' %}">Google Login</a>
+                    <a href="{% url 'django.contrib.auth.views.login' %}">Login</a>
                 </div>
             {%endif%}
             <div id="userOptionsMenu" class="triangle-isosceles top">
