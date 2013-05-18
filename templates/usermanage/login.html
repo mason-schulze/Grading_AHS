@@ -70,7 +70,7 @@
             {%endfor%}
         </div>
         <input type="submit" value="Login"/>
-        <input type="hidden" value="{{next}}"/>        
+        <input type="hidden" value="{{next}}"/>
         <div id="register">
             <strong>Don't have an account? </strong>
             <a href="{% url 'user_manage.views.registerUser' %}">Register</a>
@@ -78,6 +78,6 @@
     </form>
     <div id="other_services">
         <h3>Other services</h3>
-        <a href="{% url 'socialauth_begin' 'google-oauth2' %}" class='zocial googleplus'>Google Login</a>
+        <a href="{% url 'socialauth_begin' 'google-oauth2' %}{% if next %}next={{next}}{% endif %}" class='zocial googleplus'>Google Login</a>
     </div>
 {%endblock%}
