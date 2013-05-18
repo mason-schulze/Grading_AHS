@@ -78,6 +78,6 @@
     </form>
     <div id="other_services">
         <h3>Other services</h3>
-        <a href="{% url 'socialauth_begin' 'google-oauth2' %}{% if next %}next={{next}}{% endif %}" class='zocial googleplus'>Google Login</a>
+        <a href="{% url 'socialauth_begin' 'google-oauth2' %}{% if next %}?next={{next}}{% endif %}" class='zocial googleplus'>Google Login</a>
     </div>
 {%endblock%}
