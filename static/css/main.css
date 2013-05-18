@@ -172,8 +172,3 @@ button:active, input[type=button]:active, input[type=submit]:active{
     border-width:0 15px 15px; /* vary these values to change the angle of the vertex */
     border-color:white transparent;
 }
-
-#register{
-    float:left;
-    padding:5px;
-}

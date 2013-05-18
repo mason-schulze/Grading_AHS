@@ -4,7 +4,7 @@
     <style type="text/css">
         form{
             display:inline-block;
-            width:250px;
+            width:300px;
             padding:1em;
             border-right:1px solid gray;
             text-align: left;
@@ -12,10 +12,14 @@
         #other_services{
             padding:1em;
             display:inline-block;
-            width:250px;
+            width:200px;
             height:250px;
             vertical-align: top;
             text-align: left;
+        }
+        form #register{
+            margin:10px 0px;
+            font-size: 0.8em;
         }
         form h3, #other_services h3{
             margin:0;
@@ -29,7 +33,7 @@
             border: 1px solid #D2D2D2;
             box-shadow: 0 0 2px #DDDDDD inset;
             padding: 5px;
-            width:230px;
+            width:90%;
             margin: 5px 0px;
         }
         input[type=text]:focus, input[type=password]:focus{
@@ -66,7 +70,11 @@
             {%endfor%}
         </div>
         <input type="submit" value="Login"/>
-        <input type="hidden" value="{{next}}"/>
+        <input type="hidden" value="{{next}}"/>        
+        <div id="register">
+            <strong>Don't have an account? </strong>
+            <a href="{% url 'user_manage.views.registerUser' %}">Register</a>
+        </div>
     </form>
     <div id="other_services">
         <h3>Other services</h3>
