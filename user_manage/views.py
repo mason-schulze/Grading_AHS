@@ -12,10 +12,10 @@ def editInfo(request, msg=""):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.INFO, 'User information changed.')
-            return redirect("/home/")
+            return redirect(request.POST.get("next"))
     else:
         form = InfoEditForm(instance=request.user)
-    return render_to_response("usermanage/edit_info.html", {"form": form, "new_user": request.GET.get("nu", False)}, context_instance=RequestContext(request))
+    return render_to_response("usermanage/edit_info.html", {"form": form, "new_user": request.GET.get("nu", False), "next": request.GET.get("next", "/home/")}, context_instance=RequestContext(request))
 
 
 def registerUser(request):
