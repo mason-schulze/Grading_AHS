@@ -26,4 +26,4 @@ def registerUser(request):
             return redirect("/")
     else:
         form = RegistrationForm()
-    return render_to_response("form_base.html", {"form": form})
+    return render_to_response("form_base.html", {"form": form, "submit_text": "Register", "form_title": "User Registration"})
