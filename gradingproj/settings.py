@@ -1,22 +1,26 @@
 # Django settings for gradingproj project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+PROJECT_DIR = "/home/smorris/git_projects/ahs_grading_proj/"
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
+ALLOWED_HOSTS = ['localhost', 'grading.ausdk12.org']
+
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'gradingprojdb',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'albusd_gradingproj',                      # Or path to database file if using sqlite3.
+        'USER': 'albusd_grading',                      # Not used with sqlite3.
+        'PASSWORD': 'terences',                  # Not used with sqlite3.
+        #'HOST': '108.167.179.132',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '',
+        'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -56,7 +60,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = '/home/smorris/public_html/static/ahs_grading_proj/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -67,7 +71,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "C:/Users/2pro4u/Documents/git_projects/ahs_grading_proj/static/",
+    PROJECT_DIR + 'static/',
 )
 
 # List of finder classes that know how to find static files in
@@ -111,7 +115,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "C:/Users/2pro4u/Documents/git_projects/ahs_grading_proj/templates",
+    PROJECT_DIR + "templates",
 )
 
 INSTALLED_APPS = (
