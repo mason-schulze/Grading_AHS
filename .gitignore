@@ -1,3 +1,10 @@
+include/
+bin/
+lib/
+local/
+test.db
+share/
+gradingproj/settingsdebug.py
 
 # Logs and databases #
 ######################
