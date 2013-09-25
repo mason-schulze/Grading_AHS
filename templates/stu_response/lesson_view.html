@@ -2,6 +2,7 @@
 
 {%block head%}
 <script src="/static/js/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.10/alertify.min.js"></script>
 <script>
 $(document).ready(function(){
     addResponses({{responses|safe}});
@@ -27,6 +28,8 @@ $(document).ready(function(){
         return true;
     });
     $("#save").click(function(){
+        $("#save").attr("disabled", true);
+        alertify.log("Saving...");
         responses = [];
         var data = $(".question");
         for(var x = 0; x<data.length; x++){
@@ -35,13 +38,30 @@ $(document).ready(function(){
             responses.push({id:id,response:response});
         }
         $("#responses").val(JSON.stringify(responses));
-        $.post(window.location.href,{"responses":JSON.stringify(responses)},function(data){
-            if(data.success){
-                if(opener!=null){
-                    opener.location.reload(true);
-                }
-            }
+        var request = $.ajax({
+            type: "post",
+            url: window.location.href,
+            data: {"responses": JSON.stringify(responses)}
         });
+        request.done(function(data) {
+            $("#save").attr("disabled", false);
+            alertify.success("Save successful!");
+        });
+        request.fail(function(data) {
+            $("#save").attr("disabled", false);
+            alertify.error("Save failed. Please try again.");
+        });
+
+
+        // $.post(window.location.href,{"responses":JSON.stringify(responses)},function(data){
+        //     if(data.success){
+        //         $("#save").attr("disabled", false);
+        //         alertify.l
+        //         if(opener!=null){
+        //             opener.location.reload(true);
+        //         }
+        //     }
+        // });
         return false;
     });
     function addResponses(arr){        
@@ -113,7 +133,7 @@ $(document).ready(function(){
     </table>
     <input type="hidden" name="responses" id="responses"/>
     <br/>
-    <input type="button" id="save" value="Save"/>
-    <input type="submit" value="Save and close"/>
+    <input type="button" class="btn btn-primary" id="save" value="Save"/>
+    <input type="submit" class="btn btn-success" value="Save and close"/>
 </form>
 {%endblock%}
