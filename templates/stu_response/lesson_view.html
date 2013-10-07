@@ -51,7 +51,9 @@ $(document).ready(function(){
             switch (String.fromCharCode(event.which).toLowerCase()) {
             case 's':
                 event.preventDefault();
-                ajaxSave('ctrl-s');
+                if (!($("#save").is(":disabled"))) {
+                    ajaxSave();
+                }
                 break;
             }
         }
