@@ -31,11 +31,30 @@ $(document).ready(function(){
     $("#save").click(function(){
         ajaxSave();
     });
+    // bind out of textarea:
     Mousetrap.bind(['ctrl+s', 'command+s'], function(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        } else {
+            // internet explorer
+            e.returnValue = false;
+        }
+        
         if (!($("#save").is(":disabled"))) {
             ajaxSave();
         }
         return false;
+    });
+    // bind in textarea:
+    $(window).bind('keydown', function(event) {
+        if (event.ctrlKey || event.metaKey) {
+            switch (String.fromCharCode(event.which).toLowerCase()) {
+            case 's':
+                event.preventDefault();
+                ajaxSave('ctrl-s');
+                break;
+            }
+        }
     });
     function ajaxSave() {
         $("#save").attr("disabled", true);
