@@ -140,7 +140,6 @@ def viewLesson(request, lesson_id):
         if request.is_ajax():
             return HttpResponse(simplejson.dumps({"success": True}), mimetype='application/json')
         messages.success(request, "Responses successfully recorded.")
-        return redirect('/')
     return render_to_response("stu_response/lesson_view.html", {"lesson": lesson, "questions": lesson.questions.all().order_by('q_num'), "responses": simplejson.dumps(responses)}, context_instance=RequestContext(request))
 
 
