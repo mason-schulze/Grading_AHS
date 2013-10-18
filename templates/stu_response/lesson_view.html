@@ -75,8 +75,13 @@ $(document).ready(function(){
             data: {"responses": JSON.stringify(responses)}
         });
         request.done(function(data) {
-            $("#save").attr("disabled", false);
-            alertify.success("Save successful!");
+            if (data['success'] === true) {
+                $("#save").attr("disabled", false);
+                alertify.success("Save successful!");    
+            } else {
+                $("#save").attr("disabled", false);
+                alertify.error("Save failed. Please try again.");
+            }
         });
         request.fail(function(data) {
             $("#save").attr("disabled", false);
