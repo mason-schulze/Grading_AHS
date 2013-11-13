@@ -1,8 +1,8 @@
 # Django settings for gradingproj project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-PROJECT_DIR = "/home/smorris/git_projects/ahs_grading_proj/"
+PROJECT_DIR = "/home/randall/workspace/grading/ahs_grading_proj/"
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -14,13 +14,13 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'albusd_gradingproj',                      # Or path to database file if using sqlite3.
-        'USER': 'albusd_grading',                      # Not used with sqlite3.
-        'PASSWORD': 'terences',                  # Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'test.db',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
         #'HOST': '108.167.179.132',                      # Set to empty string for localhost. Not used with sqlite3.
         'HOST': '',
-        'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -60,7 +60,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/home/smorris/public_html/static/ahs_grading_proj/static/'
+STATIC_ROOT = '/home/randall/workspace/gradingstatic/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -125,50 +125,36 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
     'stu_response',
     'user_manage',
-    'social_auth',
+    'social.apps.django_app.default',
 )
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '12361495098.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '67chjJNn6dfq8G07PR7rOPfg'
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
+SOCIAL_AUTH_LOGIN_URL = '/login/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/account/info/edit/?nu=1'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/'
+SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/'
+SOCIAL_AUTH_INACTIVE_USER_URL = '/'
+SOCIAL_AUTH_USER_MODEL = 'auth.User'
 SOCIAL_AUTH_UID_LENGTH = 222
 SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH = 200
 SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH = 135
-SOCIAL_AUTH_ASSOCIATION_HANDLE_LENGTH = 125
-LOGIN_ERROR_URL = '/login-error/'
-
-AUTHENTICATION_BACKENDS = (
-    # 'social_auth.backends.google.GoogleOAuthBackend',
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    # 'social_auth.backends.google.GoogleBackend',
-    # 'social_auth.backends.contrib.github.GithubBackend',
-    # 'social_auth.backends.OpenIDBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
-GOOGLE_OAUTH2_CLIENT_ID = '12361495098.apps.googleusercontent.com'
-GOOGLE_OAUTH2_CLIENT_SECRET = '67chjJNn6dfq8G07PR7rOPfg'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-    'social_auth.context_processors.social_auth_by_name_backends',
-    'social_auth.context_processors.social_auth_backends',
-    # 'social_auth.context_processors.social_auth_by_type_backends',
-    # 'social_auth.context_processors.social_auth_login_redirect',
-)
-
-SOCIAL_AUTH_PIPELINE = (
-    'social_auth.backends.pipeline.social.social_auth_user',
-    'social_auth.backends.pipeline.associate.associate_by_email',
-    'social_auth.backends.pipeline.user.get_username',
-    'social_auth.backends.pipeline.user.create_user',
-    'social_auth.backends.pipeline.social.associate_user',
-    'social_auth.backends.pipeline.social.load_extra_data',
-    # 'social_auth.backends.pipeline.user.update_user_details'
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -126,14 +126,6 @@ function addFilterListeners(){
 }
 
 function addTableListeners(){    
-    $(".response input[type='checkbox']").unbind();
-    $(".response input[type='checkbox']").change(function(){
-        var curr = $($(this).next(".r_id"));
-        var seen = ($(this).attr('checked')!=undefined)?1:0;
-        $.get("/ajax/setseen/"+curr.val()+"/",{"seen":seen}, function(data){
-            
-        });
-    });
     $("#selAll").unbind();
     $("#selAll").click(function(){
         $(".response input[type='checkbox']").attr("checked", "checked");
@@ -193,6 +185,26 @@ function addTableListeners(){
             }
         });
     });
+    $(".response input[type='checkbox']").unbind();
+    $(".response input[type='checkbox']").change(function(){
+        var curr = $($(this).next(".r_id"));
+        var seen = ($(this).attr('checked')!=undefined)?1:0;
+        $.get("/ajax/setseen/"+curr.val()+"/",{"seen":seen}, function(data){
+        });
+        var comment = $($('.seen').parent().children()[4].children[0]);
+
+        if (seen === 1) {
+            if (comment.val() === '') {
+                comment.val('OK');
+                comment.trigger('blur');
+            }
+        } else if (seen === 0) {
+            if (comment.val() === 'OK') {
+                comment.val('');
+                comment.trigger('blur');
+            }
+        }
+    });    
 }
 
 var responseTemplate = "\
