@@ -9,6 +9,7 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.template import RequestContext
 from django.contrib import messages
 from django.utils.safestring import mark_safe
+import itertools
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -40,8 +41,15 @@ def createLesson(request):
 @user_passes_test(lambda u: u.is_staff)
 def editLesson(request, lesson_id):
     lesson = get_object_or_404(Lesson, key=lesson_id)
-    if request.user != lesson.creator:
+
+    lesson_is_in = lesson.class_set.all()
+    user_is_legit = False
+    for cls in lesson_is_in:
+        if request.user in cls.teachers.all():
+            user_is_legit = True
+    if not user_is_legit:
         return HttpResponseForbidden("You do not have access to this page.")
+
     if(request.method == "POST"):
         questions = simplejson.loads(request.POST['questions'])
         lesson.name = request.POST['lesson_name']
@@ -76,6 +84,7 @@ def editLesson(request, lesson_id):
 @user_passes_test(lambda u: u.is_staff)
 def deleteLesson(request, lesson_id):
     lesson = get_object_or_404(Lesson, key=lesson_id)
+
     if lesson.creator == request.user:
         lesson.recorded_responses.all().delete()
         lesson.questions.all().delete()
@@ -146,7 +155,13 @@ def viewLesson(request, lesson_id):
 @user_passes_test(lambda u: u.is_staff)
 def viewResponses(request, lesson_id, q_num=None, stu_id=None):
     lesson = get_object_or_404(Lesson, key=lesson_id)
-    if request.user != lesson.creator:
+
+    lesson_is_in = lesson.class_set.all()
+    user_is_legit = False
+    for cls in lesson_is_in:
+        if request.user in cls.teachers.all():
+            user_is_legit = True
+    if not user_is_legit:
         return HttpResponseForbidden("You do not have access to this page.")
     lesson_set = lesson.questions.all().order_by('q_num')
     classes = lesson.class_set.all()
@@ -265,7 +280,12 @@ def viewClass(request, class_id):
 def getResponses(request, lesson_id, q_num=None, stu_id=None):
     lesson = get_object_or_404(Lesson, key=lesson_id)
 
-    if request.user != lesson.creator:
+    lesson_is_in = lesson.class_set.all()
+    user_is_legit = False
+    for cls in lesson_is_in:
+        if request.user in cls.teachers.all():
+            user_is_legit = True
+    if not user_is_legit:
         return HttpResponseForbidden("You do not have access to this page.")
 
     if request.GET.get("order", False) and request.GET.get("order") != "":
@@ -297,8 +317,15 @@ def getResponses(request, lesson_id, q_num=None, stu_id=None):
 @user_passes_test(lambda u: u.is_staff)
 def getStudentsInLesson(request, lesson_id):
     lesson = get_object_or_404(Lesson, key=lesson_id)
-    if request.user != lesson.creator:
+
+    lesson_is_in = lesson.class_set.all()
+    user_is_legit = False
+    for cls in lesson_is_in:
+        if request.user in cls.teachers.all():
+            user_is_legit = True
+    if not user_is_legit:
         return HttpResponseForbidden("You do not have access to this page.")
+
     users = {
         "working": [],
         "seen": [],
@@ -331,8 +358,16 @@ def getStudentsInLesson(request, lesson_id):
 def toggleSeen(request, r_id):
     if request.is_ajax() and request.GET.get('seen', False) and request.user.is_staff:
         r = Response.objects.get(uid=r_id)
-        if request.user != r.getLesson().creator:
+
+        lesson = r.question.lesson_set.all()[0]
+        lesson_is_in = lesson.class_set.all()
+        user_is_legit = False
+        for cls in lesson_is_in:
+            if request.user in cls.teachers.all():
+                user_is_legit = True
+        if not user_is_legit:
             return HttpResponseForbidden("You do not have access to this page.")
+
         r.viewed = True if request.GET['seen'] == '1' else False
         r.save()
         return HttpResponse(simplejson.dumps({"seen": r.viewed}), mimetype="application/json")
@@ -352,7 +387,10 @@ def home(request, responses=False):
                 lessons.append(curr)
             return render_to_response("user_home.html", {"lessons": lessons}, context_instance=RequestContext(request))
         if request.user.is_staff:
-            lesson_set = Lesson.objects.filter(creator=request.user).order_by('-creation_date')
+            classes = Class.objects.filter(teachers=request.user)
+            lesson_set = [cls.lessons.select_related() for cls in classes]
+            lesson_set = list(itertools.chain.from_iterable(lesson_set))
+            lesson_set.sort(key=lambda l: l.id, reverse=True)
             for x in lesson_set:
                 curr = {
                     "lesson": x,
